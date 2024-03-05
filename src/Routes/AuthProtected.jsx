@@ -4,8 +4,8 @@ import { UserContext } from "../context/user";
 
 const AuthProtected = (props) => {
     const [state, dispatch] = useContext(UserContext);
-
-    if (!state?.isLoggedIn) {
+    console.log("state =>",state)
+    if (!state.isLoggedIn) {
         return <Navigate to={{ pathname: "/login", state: { from: props.location } }} />;
     }
 

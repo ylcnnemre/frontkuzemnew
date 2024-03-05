@@ -13,14 +13,15 @@ export const UserContext = createContext(initialState);
 
 export function UserStore({ children }) {
     const [state, dispatch] = useReducer((state, action) => {
+        console.log("action =>",action.payload)
         switch (action.type) {
             case 'LOGIN':
                 const {
-                    access,
+                    accessToken,
                     ...rest
                 } = action.payload;
 
-                localStorage.setItem('authToken', access);
+                localStorage.setItem('authToken', accessToken);
                 //localStorage.setItem('steps', JSON.stringify({ stepComplete1, stepComplete2, stepComplete3, stepComplete4 }));
 
                 return {
@@ -29,19 +30,9 @@ export function UserStore({ children }) {
                     ...rest,
                 };
 
-
             case 'LOGOUT':
                 localStorage.removeItem('authToken');
-                //localStorage.removeItem('steps');
                 return { isLoggedIn: false, name: '' };
-
-            // case 'UPDATE_STEP':
-            //     const { step, value } = action.payload;
-            //     const steps = JSON.parse(localStorage.getItem('steps')) || {};
-            //     steps[step] = value;
-            //     localStorage.setItem('steps', JSON.stringify(steps));
-            //     return { ...state, [step]: value };
-
             default:
                 return state;
         }

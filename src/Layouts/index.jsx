@@ -51,9 +51,6 @@ const Layout = (props) => {
         sidebarVisibilitytype: state.Layout.sidebarVisibilitytype
     }));
 
-    /*
-    layout settings
-    */
     useEffect(() => {
         if (
             layoutType ||
@@ -90,16 +87,13 @@ const Layout = (props) => {
         leftSidebarImageType,
         sidebarVisibilitytype,
         dispatch]);
-    /*
-    call dark/light mode
-    */
+
     const onChangeLayoutMode = (value) => {
         if (changeLayoutMode) {
             dispatch(changeLayoutMode(value));
         }
     };
 
-    // class add remove in header 
     useEffect(() => {
         window.addEventListener("scroll", scrollNavigation, true);
     });
@@ -132,7 +126,11 @@ const Layout = (props) => {
                     layoutType={layoutType}
                 />
                 <div className="main-content">
+
                     {props.children}
+
+
+
                     <Footer />
                 </div>
             </div>

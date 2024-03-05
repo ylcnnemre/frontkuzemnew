@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Dropdown, DropdownMenu, DropdownToggle, Form } from 'reactstrap';
+import { Button, Dropdown, DropdownMenu, DropdownToggle, Form } from 'reactstrap';
 
 
 import logoSm from "../assets/images/sm-logo.svg";
@@ -64,19 +64,23 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                 <div className="layout-width">
                     <div className="navbar-header">
                         <div className="d-flex">
-                            <div className="navbar-brand-box horizontal-logo">
-                                <Link to="/" className="logo logo-dark">
+                            <div className="navbar-brand-box horizontal-logo" style={{ alignItems: "center", justifyContent: "center" }}  >
+                                <Link to="/" className="logo logo-dark" style={{ height: "100%", alignItems: "center", justifyContent: "center", fontSize: "32px" }}>
 
-                                    <span className="logo-lg">
+                                    Kuzem
+
+                                    {/*  <span className="logo-lg">
                                         <img src={logo} alt="" height="17" />
-                                    </span>
+                                    </span> */}
                                 </Link>
 
-                                <Link to="/" className="logo logo-light">
+                                <Link to="/" className="logo logo-light" style={{ height: "100%", alignItems: "center", justifyContent: "center", fontSize: "32px" }}>
 
-                                    <span className="logo-lg">
-                                        <img src={darkModeLogo} alt="" height="17" />
-                                    </span>
+                                    Kuzem
+
+                                    {/*  <span className="logo-lg">
+                                        <img src={logo} alt="" height="17" />
+                                    </span> */}
                                 </Link>
                             </div>
 
