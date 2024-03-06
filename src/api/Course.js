@@ -1,0 +1,63 @@
+import { axiosInstance } from "./axiosInstance";
+
+const getAllCourseByStatusApi = (status) => axiosInstance.get(`/course/all/${status}`)
+
+const getDetailCourseApi = (id) => axiosInstance.get(`/course/${id}`)
+
+const updateCourseApi = (data) => axiosInstance.put("/course", data)
+
+const createCourseApi = (data) => axiosInstance.post("/course/create", data, {
+    headers: {
+        "Content-Type": "multipart/form-data"
+    }
+})
+
+const deleteCourseApi = (data) => axiosInstance.delete("/course/delete", {
+    data: {
+        ...data
+    }
+})
+
+const deleteCourseSendEmailApi = (id) => axiosInstance.post(`/course/${id}`)
+
+
+const deleteDocumentApi = (data) => axiosInstance.delete("/course/document", {
+    data: {
+        ...data
+    }
+})
+
+const addPhotoApi = (data) => axiosInstance.post("/course/photo", data, {
+    headers: {
+        "Content-Type": "multipart/form-data"
+    }
+})
+
+
+const addDocumentApi = (data) => axiosInstance.post("/course/document", data, {
+    headers: {
+        "Content-Type": "multipart/form-data"
+    }
+})
+
+const deletePhotoApi = (data) => axiosInstance.delete(`/course/photo`, {
+    data: {
+        ...data
+    }
+})
+const updateCourseProgramApi = (data) => axiosInstance.post("/course/program", data)
+
+
+export {
+    getAllCourseByStatusApi,
+    getDetailCourseApi,
+    createCourseApi,
+    updateCourseApi,
+    deleteCourseApi,
+    deleteCourseSendEmailApi,
+    addDocumentApi,
+    addPhotoApi,
+    deleteDocumentApi,
+    deletePhotoApi,
+    updateCourseProgramApi
+}

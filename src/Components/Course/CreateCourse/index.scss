@@ -1,0 +1,236 @@
+.photo_list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    row-gap: 15px;
+}
+
+.ant-steps-item-title {
+    color: #4788FF !important;
+
+    &::after {
+        background-color: #4788FF !important;
+    }
+}
+
+
+.ant-steps-item-icon {
+    background-color: #4788FF !important;
+    border: none !important;
+
+    .ant-steps-icon {
+        color: white !important;
+    }
+}
+
+.custom-time-picker {
+
+    height: 100%;
+    width: 100%;
+    padding-top: 8px;
+    padding-bottom: 8px;
+
+}
+
+/* .custom-time-picker .ant-picker-input input::placeholder {
+    color: white;
+
+} */
+
+.swiper_add_course_container {
+    margin: 20px 0;
+
+    .course_photo_img {
+        max-height: 200px;
+        width: 90%;
+        border-radius: 20px;
+    }
+
+}
+
+.addCoursePhoto_bottom {
+    display: flex;
+    justify-content: space-between;
+}
+
+.add_course_document {
+
+
+    .document_slide {
+        border-radius: 20px;
+        padding: 20px;
+        background-color: rgba(gray, .2);
+    }
+
+    &_bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+
+.program_card {
+    display: flex;
+    flex-direction: column;
+    background-color: rgba($color: gray, $alpha: .1);
+    border-radius: 20px;
+    padding: 10px 15px;
+    position: relative;
+
+    &_header {
+        display: flex;
+        align-items: center;
+    }
+
+    &_footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        p {
+            margin: 0 !important;
+        }
+
+        &_detail_btn {
+            background-color: rgba($color: #4788FF, $alpha: .9);
+            padding: 2px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: .5s all;
+            color: white;
+
+            &:hover {
+                opacity: .7;
+            }
+        }
+    }
+
+    .program_card_close_icon {
+        position: absolute;
+        right: 0;
+        top: 0;
+        background-color: red;
+        border-radius: 50%;
+        font-size: 20px;
+        padding: 4px;
+        cursor: pointer;
+        transition: .5s all;
+
+        &:hover {
+            opacity: .7;
+        }
+    }
+}
+
+
+.program_date_card {
+    position: absolute;
+    right: -300px;
+    transition: 1s all;
+}
+
+
+.program_date_right_bar {
+    visibility: hidden;
+    position: absolute;
+    overflow-y: scroll;
+    right: 0;
+    height: 100vh;
+    top: 0;
+    width: 420px;
+    z-index: 10000;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 20px;
+    background-color: #061E39;
+    padding: 30px;
+
+    &_header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+
+        .close_icon {
+            font-size: 32px;
+            background-color: rgba($color: red, $alpha: .7);
+            border-radius: 50%;
+            padding: 3px 8px;
+            cursor: pointer;
+            transition: opacity .5s ease-in-out;
+
+            &:hover {
+                opacity: .5;
+            }
+        }
+
+        h6 {
+            font-size: 1.1rem;
+        }
+    }
+
+
+    &_content {
+        display: flex;
+        flex-direction: column;
+
+        .content_day_list_card {
+            display: flex;
+            flex-direction: column;
+            background-color: rgba($color: #4788FF, $alpha: .4);
+            margin-bottom: 20px;
+            border-radius: 10px;
+            padding-top: 8px;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-bottom: 8px;
+
+            h6 {
+                margin-bottom: 0;
+            }
+
+            &_header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 10px;
+            }
+
+
+            &_footer {
+                display: flex;
+                justify-content: space-between;
+            }
+        }
+
+    }
+}
+
+
+.opacity-show {
+    visibility: visible;
+}
+
+.program_schedulee_text_color {
+    color: rgba($color: blue, $alpha: .6);
+}
+
+.course_date_list {
+    background-color: white;
+    height: 400px;
+    overflow-y: scroll;
+    padding-right: 10px;
+    .date_list_card {
+        display: flex;
+        flex-direction: column;
+        background-color:rgba($color: cadetblue, $alpha: .7);
+        margin-bottom: 10px;
+        padding: 8px 15px;
+        border-radius: 10px;
+        color: white;
+        &_section_1 {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+    }
+}

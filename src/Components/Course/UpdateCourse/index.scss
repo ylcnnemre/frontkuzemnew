@@ -1,0 +1,319 @@
+.tab_content {
+    padding-left: 10px;
+
+    .swiper_container {
+
+
+        .photo_slide {
+            transition: .5s all;
+            cursor: pointer;
+
+
+            .photo_section {
+                padding: 10px;
+                background-color: rgba($color: #4788FF, $alpha: .3);
+                border-radius: 15px;
+                display: flex;
+                flex-direction: column;
+
+                .card_footer {
+                    margin-top: 10px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    
+
+                    p{
+                        margin: 0 !important;
+                    }
+
+                    .delete_btn {
+                        width: max-content;
+                        align-self: flex-end;
+                        padding: 4px 25px;
+                    }
+                }
+            }
+
+            &:hover .zoom_icon {
+                opacity: 1;
+            }
+
+            .zoom_icon {
+                transition: .5s all;
+                position: absolute;
+                top: 40%;
+                left: 50%;
+                font-size: 2rem;
+                transform: translateX(-50%) translateY(-50%);
+                color: white;
+                opacity: 0;
+            }
+
+            .photo_img {
+                border-radius: 10px;
+                position: relative;
+                transition: .5s all;
+                z-index: 1000;
+                width: 100%;
+                height: 100px;
+
+                &:hover {
+                    opacity: .7;
+                }
+            }
+        }
+
+
+        .document_slide {
+            transition: .5s all;
+
+            .document_section {
+                display: flex;
+                flex-direction: column;
+                background-color: rgba($color: gainsboro, $alpha: .5);
+                border-radius: 15px;
+                position: relative;
+                transition: .5s all;
+
+                &_container {
+                    display: flex;
+                    padding: 10px 10px;
+                }
+
+                &_content {
+                    width: 100%;
+                    padding-left: 20px;
+                    position: relative;
+
+                    .document_name {
+                        margin-bottom: 10px;
+
+                        span {
+                            font-weight: bolder;
+                        }
+                    }
+
+                    .document_createdBy {
+                        margin-bottom: 0;
+                        span {
+                            font-weight: bolder;
+                        }
+                    }
+
+                    .zoom_icon {
+                        opacity: 1;
+                        display: none;
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                    }
+                }
+
+                .delete_btn_container {
+                    width: 100% !important;
+                    border-top: .5px solid rgba($color: gray, $alpha: .3);
+                    display: flex;
+                    padding: 10px 20px 10px 10px;
+                    width: max-content;
+                    justify-content: space-between;
+                    align-items: center;
+
+                    .delete_btn {
+                        padding: 3px 20px;
+                    }
+                }
+
+            }
+        }
+    }
+}
+
+
+.ant-steps-item-title {
+    color: #4788FF !important;
+
+    &::after {
+        background-color: #4788FF !important;
+    }
+}
+
+
+.ant-steps-item-icon {
+    background-color: #4788FF !important;
+    border: none !important;
+
+    .ant-steps-icon {
+        color: white !important;
+    }
+}
+
+.custom-time-picker {
+
+    height: 100%;
+    width: 100%;
+    padding-top: 8px;
+    padding-bottom: 8px;
+
+}
+
+.custom-time-picker .ant-picker-input input::placeholder {
+    color: white;
+    /* Değiştirmek istediğiniz placeholder rengi */
+}
+
+
+.program_card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    padding: 10px 20px;
+    position: relative;
+
+    &_header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    &_footer {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .program_card_close_icon {
+        position: absolute;
+        right: 0;
+        top: 0;
+        background-color: red;
+        border-radius: 50%;
+        font-size: 20px;
+        padding: 4px;
+        cursor: pointer;
+        transition: .5s all;
+
+        &:hover {
+            opacity: .7;
+        }
+    }
+}
+
+.course_announcement_container {
+    height: 250px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+
+    &_card {
+        display: flex;
+        align-items: center;
+        background-color: #061E39;
+        margin-bottom: 20px;
+        padding: 15px 10px;
+        border-radius: 20px;
+        transition: .5s all;
+        cursor: pointer;
+
+        &:hover {
+            opacity: .5;
+        }
+    }
+}
+
+.announcement_document_container {
+    display: flex;
+    flex-direction: column;
+    background-color: #2A4562;
+    border-radius: 10px;
+
+    .announcement_document_section {
+        display: flex;
+        padding: 15px;
+        align-items: center;
+
+    }
+
+    .announcement_btn_footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 5px 10px 5px 10px;
+
+        .delete_btn {
+
+            width: max-content;
+            padding: 3px 20px;
+        }
+    }
+
+}
+
+.announcement_border {
+    border-bottom: 1px solid gray;
+}
+
+.modal-title {
+    width: 100%;
+}
+
+.delete_course_container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    .delete_course_btn {
+        width: 100%;
+    }
+
+    .delete_course_confirm {
+        border: 1px solid gray;
+        padding: 30px 30px;
+        padding-bottom: 30px;
+        border-radius: 5px;
+        margin-top: 40px;
+
+        .timer_container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            h6 {
+                margin-bottom: 0;
+            }
+
+            .timer_element {
+                padding: 5px 20px;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+
+                .timer_icon {
+                    font-size: 24px;
+                    margin-right: 10px;
+                }
+
+            }
+        }
+
+        .verification_input_container {
+            margin-top: 30px;
+        }
+
+        h6 {
+            margin-bottom: 20px;
+        }
+
+        .delete_course_confirm_container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+    }
+
+}
+
+.character_field {
+    border-radius: 10px;
+
+}

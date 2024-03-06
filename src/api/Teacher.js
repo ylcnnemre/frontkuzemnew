@@ -4,8 +4,9 @@ import useFetch from "../hooks/useFetch"
 
 const GetTeacherListApi = (role) => useFetch(`/user/all/${role}`)
 
-
+const getTeacherListApi = (id) => axiosInstance.get(`/user/teacher/branch/${id}`)
 
 export {
-    GetTeacherListApi
+    GetTeacherListApi,
+    getTeacherListApi
 }

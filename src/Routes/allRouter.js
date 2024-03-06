@@ -15,6 +15,11 @@ import StudentTable from "../Components/Student/StudentTable";
 import StudentDasboard from "../pages/Student/StudentDasboard";
 import CreateStudenPage from "../pages/Student/CreateStudenPage";
 import UpdateStudentPage from "../pages/Student/UpdateStudentPage";
+import ActiveCourseDashboard from "../pages/Course/ActiveCourseDashboard";
+import CourseDetailPage from "../pages/Course/CourseDetailPage";
+import CreateCoursePage from "../pages/Course/CreateCoursePage";
+import UpdateCourseForm from "../Components/Course/UpdateCourse/UpdateCourseForm";
+import CourseUpdatePage from "../pages/Course/CourseUpdatePage";
 
 const authProtectedRoutes = [
     {
@@ -52,6 +57,18 @@ const authProtectedRoutes = [
     },
     {
         path: "/panel/ogrenci/duzenle/:id", component: <UpdateStudentPage />
+    },
+    {
+        path: "/panel/kurslar", component: <ActiveCourseDashboard />
+    },
+    {
+        path: "/panel/kurs/:id", component: <CourseDetailPage />
+    },
+    {
+        path: "/panel/kurs/ekle", component: <CreateCoursePage />
+    },
+    {
+        path: "/panel/kurs/duzenle/:id", component: <CourseUpdatePage />
     },
     {
         path: "*", component: <Navigate to={"/panel/anasayfa"} />
