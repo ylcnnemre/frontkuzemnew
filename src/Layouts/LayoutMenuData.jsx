@@ -27,7 +27,15 @@ const Navdata = () => {
             label: "Sayfalar",
             isHeader: true,
         },
-
+        {
+            id: "Anasayfa",
+            label: "Anasayfa",
+            icon: "ri-home-4-line",
+            link: "/panel/anasayfa",
+            click: function (e) {
+                e.preventDefault()
+            }
+        },
         {
             id: "Eğitmenler",
             label: "Eğitmenler",
@@ -37,76 +45,76 @@ const Navdata = () => {
                 e.preventDefault();
             },
         },
-         {
-             id: "admin",
-             label: "Admin",
-             icon: "ri-admin-line",
-             link: "/panel/admin",
-             click: function (e) {
-                 e.preventDefault();
-             },
-         },
- 
-         {
-             id: "branslar",
-             label: "Branslar",
-             icon: "ri-git-branch-fill",
-             link: "/panel/branslar",
-             click: function (e) {
-                 e.preventDefault();
-                 setIscurrentState("Branslar");
-             },
-         },
-         {
-             id: "dönemler",
-             label: "Dönemler",
-             icon: "ri-calendar-line",
-             link: "/panel/donemler",
-             click: function (e) {
-                 e.preventDefault();
-             },
-         },
-         {
-             id: "kurslar",
-             label: "Kurslar",
-             icon: "ri-git-repository-line",
-             link: "/panel/kurslar",
-             click: function (e) {
-                 e.preventDefault();
-                 setIsApps(!isApps);
-                 setIscurrentState("Apps");
-                 updateIconSidebar(e);
-             },
-             stateVariables: isApps,
-             subItems: [
-                 {
-                     id: "aktifkurslar",
-                     label: "Aktif Kurslar",
-                     icon: "ri-menu-line",
-                     link: "/panel/kurslar",
-                     parentId: "kurslar",
-                 },
-                 {
-                     id: "aldigimkurslar",
-                     label: "Aldığım Kurslar",
-                     icon: "ri-line-chart-line",
-                     link: "/panel/kurslarim",
-                     parentId: "kurslar",
-                 },
-             ],
-         },
-         {
-             id: "ogrenci",
-             label: "Öğrenciler",
-             icon: "ri-user-line",
-             link: "/panel/ogrenciler",
-             click: function (e) {
-                 e.preventDefault();
-                 setIsAppointments(!isAppointments);
-                 setIscurrentState("Appointments");
-                 updateIconSidebar(e);
-             },
-         }
+        {
+            id: "admin",
+            label: "Admin",
+            icon: "ri-admin-line",
+            link: "/panel/admin",
+            click: function (e) {
+                e.preventDefault();
+            },
+        },
+
+        {
+            id: "branslar",
+            label: "Branslar",
+            icon: "ri-git-branch-fill",
+            link: "/panel/branslar",
+            click: function (e) {
+                e.preventDefault();
+                setIscurrentState("Branslar");
+            },
+        },
+        {
+            id: "dönemler",
+            label: "Dönemler",
+            icon: "ri-calendar-line",
+            link: "/panel/donemler",
+            click: function (e) {
+                e.preventDefault();
+            },
+        },
+        {
+            id: "kurslar",
+            label: "Kurslar",
+            icon: "ri-git-repository-line",
+            link: "/panel/kurslar",
+            click: function (e) {
+                e.preventDefault();
+                setIsApps(!isApps);
+                setIscurrentState("Apps");
+                updateIconSidebar(e);
+            },
+            stateVariables: isApps,
+            subItems: [
+                {
+                    id: "aktifkurslar",
+                    label: "Aktif Kurslar",
+                    icon: "ri-menu-line",
+                    link: "/panel/kurslar",
+                    parentId: "kurslar",
+                },
+                {
+                    id: "aldigimkurslar",
+                    label: "Aldığım Kurslar",
+                    icon: "ri-line-chart-line",
+                    link: "/panel/kurslarim",
+                    parentId: "kurslar",
+                },
+            ],
+        },
+        {
+            id: "ogrenci",
+            label: "Öğrenciler",
+            icon: "ri-user-line",
+            link: "/panel/ogrenciler",
+            click: function (e) {
+                e.preventDefault();
+                setIsAppointments(!isAppointments);
+                setIscurrentState("Appointments");
+                updateIconSidebar(e);
+            },
+        }
     ];
 
 

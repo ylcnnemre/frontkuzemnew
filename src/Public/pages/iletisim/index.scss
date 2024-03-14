@@ -1,0 +1,75 @@
+$firstColor: #7f56d9;
+
+#c1,
+#c2 {
+    border: 5px solid #bdb4f0;
+    border-radius: 30px;
+    width: auto;
+    height: inherit;
+    overflow: hidden;
+    margin: 0 2%;
+
+}
+
+#c2 {
+    background: #dbdefa;
+
+    h4 {
+        padding-top: 20px;
+        color: #7f56d9;
+    }
+}
+
+
+#primaryButton {
+    background: #7f56d9;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border: none;
+    white-space: nowrap;
+    min-width: 6rem;
+    margin-bottom: 10px;
+
+    &:hover {
+        background: gray;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
+        border-bottom-left-radius: 20px;
+    }
+
+}
+
+.img {
+    height: 20% !important;
+
+}
+
+#title {
+    font-size: larger;
+}
+
+#info {
+    font-weight: 500;
+}
+
+@media screen and (max-width: 768px) {
+    #line {
+        visibility: hidden;
+        padding: 15px 0;
+    }
+}
+
+@media screen and (max-width: 550px) {
+    #c1 {
+        min-height: 600px !important;
+        margin-bottom: 15px;
+    }
+
+    .rwConta {
+        display: flex;
+        flex-direction: column;
+    }
+}

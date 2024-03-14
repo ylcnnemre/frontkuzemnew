@@ -1,0 +1,118 @@
+$firstColor: #7f56d9;
+
+#Navbar {
+  background: white !important;
+
+  #container {
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 5%;
+    background: transparent;
+
+
+    #logo {
+      height: 62.5px;
+    }
+
+    #buttons {
+      padding-left: 6%;
+
+
+      #button {
+        font-weight: 500;
+        color: dimgrey;
+      }
+    }
+
+    #button1 {
+      font-weight: 500;
+      color: dimgrey;
+      text-decoration: none;
+      padding-left: 12%;
+      white-space: nowrap;
+      font-size: 90%;
+
+    }
+
+    #buttonLog {
+      font-weight: 500;
+      color: dimgrey;
+      text-decoration: none;
+      padding-left: -2%;
+      white-space: nowrap;
+      font-size: 90%;
+
+    }
+
+    .ayrac {
+      padding: 0 5px;
+    }
+
+    .langDiv {
+      display: flex;
+      flex-direction: column;
+      max-width: 35%;
+    }
+
+    .langDiv2 {
+      display: flex;
+      align-items: center;
+    }
+
+    @media screen and (max-width: 1319px) {
+      #button {
+        font-weight: 500;
+        color: dimgrey;
+        font-size: 70%;
+
+      }
+
+      #button1 {
+        font-weight: 500;
+        color: dimgrey;
+        font-size: 70%;
+      }
+
+    }
+
+    @media screen and (max-width: 1117px) {
+      #buttons {
+        padding-left: 0;
+      }
+
+      #button1 {
+        font-weight: 500;
+        color: dimgrey;
+        font-size: 70%;
+
+      }
+
+      #buttonLog {
+        font-weight: 500;
+        color: dimgrey;
+        font-size: 70%;
+      }
+    }
+
+    @media screen and (max-width: 992px) {
+
+      #buttons {
+        margin-left: -20%;
+      }
+
+      .langDiv {
+
+        max-width: 100%;
+      }
+
+      .langDiv2 {
+        margin-left: -7%;
+       padding-left: -5% !important;
+      }
+
+
+
+    }
+
+  }
+}

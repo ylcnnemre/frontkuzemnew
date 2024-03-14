@@ -1,0 +1,20 @@
+$firstFamily: 'Caladea', serif;
+
+#date{
+    color:  #8E98A8;
+    font-weight: bold;
+}
+#content{
+    font-size: x-small;
+    font-weight: 500;
+  padding-top: 20px;
+  
+}
+@media screen and (max-width:770px){
+    #Card{
+margin-top: 3%;
+    }
+}
+#title{
+    font-family: $firstFamily;
+}

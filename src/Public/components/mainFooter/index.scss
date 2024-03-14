@@ -1,0 +1,101 @@
+$firstFamily: 'Caladea', serif;
+
+.Footer {
+
+    .containerCards {
+        margin-top: -10%;
+        // background-color: white; 
+        transform: translateY(18%);
+        .rowCards {
+            display: flex;
+            justify-content: center;
+        }
+    }
+
+    .row1 {
+        margin-top: 6% !important;
+
+
+        .title {
+            color: white;
+            font-family: $firstFamily;
+            font-size: x-large;
+        }
+
+        .text {
+            color: white;
+            text-decoration: none;
+        }
+
+        .text1 {
+            padding-left: 10%;
+
+        }
+
+        #logoFooter {
+            width: 100%;
+            height: auto;
+        }
+
+        .colcc {
+            padding-left: 3%;
+        }
+    }
+
+    #row2 {
+        display: flex;
+        justify-content: center;
+
+        .row2>* {
+            flex-grow: 1;
+
+        }
+
+        #hr {
+            color: white;
+            height: 3px;
+            width: 80%;
+        }
+
+        div {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10%;
+
+            p {
+                color: white;
+
+            }
+
+            div {
+                display: flex;
+                padding: 0;
+
+                .socialMedia {
+                    color: white;
+                    font-size: large;
+                    margin-left: 10px;
+                }
+            }
+        }
+    }
+
+}
+
+@media screen and (max-width: 980px) {
+    .colcc1 {
+        padding-top: 40px;
+    }
+}
+
+@media screen and (min-width: 540px) {
+    .containerCards {
+        padding-top: 5%;
+    }
+}
+
+@media screen and (min-width: 1220px) {
+    #colVidee {
+        display: none !important;
+    }
+}

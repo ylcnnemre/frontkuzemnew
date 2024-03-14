@@ -1,8 +1,15 @@
 import React from 'react'
+import TablePageContainer from '../../Components/Common/TablePageContainer'
 
 const Dashboard = () => {
   return (
-    <div>Dashboard</div>
+    <div className='page-content'>
+      <TablePageContainer>
+        <h5>
+          anasayfa
+        </h5>
+      </TablePageContainer>
+    </div>
   )
 }
 

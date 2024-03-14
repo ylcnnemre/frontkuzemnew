@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Button } from "reactstrap";
-
+import { CgProfile } from "react-icons/cg";
 //import images
 import avatar1 from "../../assets/images/users/user-dummy-img.jpg";
 import { UserContext } from "../../context/user";
@@ -14,7 +14,7 @@ const ProfileDropdown = () => {
     const toggleProfileDropdown = () => {
         setIsProfileDropdown(!isProfileDropdown);
     };
-
+    const navigate = useNavigate()
     return (
         <React.Fragment>
             <Dropdown
@@ -38,12 +38,17 @@ const ProfileDropdown = () => {
                 </DropdownToggle>
                 <DropdownMenu className="dropdown-menu-end">
                     <h6 className="dropdown-header">Hoş Geldiniz !</h6>
-
+                    <DropdownItem className="p-0"  >
+                        <Link className="dropdown-item" to={"/panel/profil"} style={{ display: "flex", alignItems: "center", fontSize: "14px" }}   >
+                            <CgProfile style={{ marginRight: "10px" }} />
+                            Profil
+                        </Link>
+                    </DropdownItem>
 
 
                     <DropdownItem className="p-0">
 
-                        <div onClick={() => dispatch({ type: "LOGOUT" })} className="dropdown-item">
+                        <div onClick={() => dispatch({ type: "LOGOUT" }) } className="dropdown-item">
                             <span className="align-middle" data-key="t-logout">
                                 <i className="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>
                                 Çıkış Yap

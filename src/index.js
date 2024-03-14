@@ -8,7 +8,7 @@ import { UserStore } from './context/user';
 import { ToastContainer } from 'react-toastify';
 import { Provider } from 'react-redux';
 import store from "./slices/index";
-
+import "./i18n"
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <>

@@ -13,11 +13,15 @@ const updateUserApi = async (data) => axiosInstance.put("/user/update", data)
 const GetAdminListApi = () => useFetch("/user/all/admin")
 
 const getStudentListApi = () => axiosInstance.get("/user/all/student")
+
+const uploadProfileImgApi = async (data) => axiosInstance.post("/user/upload/profile", data)
+
 export {
     loginApi,
     createUserApi,
     getUserByIdApi,
     updateUserApi,
     GetAdminListApi,
-    getStudentListApi
+    getStudentListApi,
+    uploadProfileImgApi
 }

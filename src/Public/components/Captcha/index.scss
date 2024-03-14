@@ -1,0 +1,52 @@
+#primaryButton {
+    background: #7f56d9;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border: none;
+    white-space: nowrap;
+    min-width: 6rem;
+   margin-bottom: 10px;
+   color: white;
+  
+    &:hover {
+      background: gray;
+      
+    }
+}
+#primaryButton2 {
+    background: #cbc2ff;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border: none;
+    white-space: nowrap;
+    min-width: 6rem;
+   margin-bottom: 10px;
+   color: white;
+  
+    &:hover {
+      background: gray;
+      
+    }
+}
+.code_section{
+    display: flex;
+    margin: 10px 0;
+}
+
+.cardxyz{
+    border: none !important;
+    background: #dbdafa !important;
+    
+}
+#kvk{
+  font-size: small;
+  margin-bottom: 15px;
+}
+
+.captcha_text_input{
+    margin: 20px 0;
+}

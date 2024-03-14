@@ -20,7 +20,17 @@ import CourseDetailPage from "../pages/Course/CourseDetailPage";
 import CreateCoursePage from "../pages/Course/CreateCoursePage";
 import UpdateCourseForm from "../Components/Course/UpdateCourse/UpdateCourseForm";
 import CourseUpdatePage from "../pages/Course/CourseUpdatePage";
-
+import MyCoursePage from "../pages/Course/MyCoursePage";
+import ProfilePage from "../pages/Profile/ProfilePage";
+import Home from "../Public/Home";
+import Kurumsal from "../Public/pages/kurumsal/Kurumsal";
+import Ekitap from "../Public/pages/e-kitap/EKitap";
+import Egitimler from "../Public/pages/egitimler/Egitimler";
+import Guncel from "../Public/pages/guncel/Guncel";
+import Blog from "../Public/pages/blog/Blog";
+import Iletisim from "../Public/pages/iletisim/İletisim"
+import BlogDetay from "../Public/pages/blogDetay/BlogDetay";
+import GuncelDetay from "../Public/pages/GuncelDetay/GuncelDetay";
 const authProtectedRoutes = [
     {
         path: "/panel/anasayfa", component: <Dashboard />
@@ -71,15 +81,29 @@ const authProtectedRoutes = [
         path: "/panel/kurs/duzenle/:id", component: <CourseUpdatePage />
     },
     {
-        path: "*", component: <Navigate to={"/panel/anasayfa"} />
+        path: "/panel/kurslarim", component: <MyCoursePage />
+    },
+    {
+        path: "/panel/profil", component: <ProfilePage />
+    },
+    {
+        path: "*", component: <Navigate to={"/"} />
     }
 ]
 
 
 const publicRoutes = [
     // Authentication Page
+    { path: "/", component: <Home /> },
+    { path: "/kurumsal", component: <Kurumsal /> },
+    { path: "/ekitap", component: <Ekitap /> },
+    { path: "/egitimler", component: <Egitimler /> },
     { path: "/login", component: <Login /> },
-
+    { path: "/guncel", component: <Guncel /> },
+    { path: "/guncel/:id", component: <GuncelDetay /> },
+    { path: "/blog", component: <Blog /> },
+    { path: "/blog/:id", component: <BlogDetay /> },
+    { path: "/iletisim", component: <Iletisim /> },
     { path: "/register", component: <Register /> },
 ];
 

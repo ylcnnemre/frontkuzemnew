@@ -48,6 +48,18 @@ const deletePhotoApi = (data) => axiosInstance.delete(`/course/photo`, {
 const updateCourseProgramApi = (data) => axiosInstance.post("/course/program", data)
 
 
+const deleteAnnouncementApi = (data) => axiosInstance.delete("/course/announcement", {
+    data: {
+        ...data
+    }
+})
+
+
+const createAnnouncementApi = (data) => axiosInstance.post("/course/announcement", data)
+
+const updateAnnouncementApi = (data) => axiosInstance.put("/course/announcement", data)
+
+
 export {
     getAllCourseByStatusApi,
     getDetailCourseApi,
@@ -59,5 +71,8 @@ export {
     addPhotoApi,
     deleteDocumentApi,
     deletePhotoApi,
-    updateCourseProgramApi
+    updateCourseProgramApi,
+    deleteAnnouncementApi,
+    createAnnouncementApi,
+    updateAnnouncementApi
 }

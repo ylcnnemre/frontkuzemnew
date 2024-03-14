@@ -231,7 +231,7 @@ const UpdateCourseForm = () => {
                                                     </div>
                                                 </div>
                                                 <div className="verification_input_container" >
-                                                    <VerificationInput validChars='0-9' autoFocus={true} classNames={{
+                                                   {/*  <VerificationInput validChars='0-9' autoFocus={true} classNames={{
                                                         character: "character_field",
                                                     }} onChange={(e) => {
                                                         setVerificationCode(e)
@@ -246,7 +246,7 @@ const UpdateCourseForm = () => {
                                                                 deleteButtonDisable: true
                                                             })
                                                         }
-                                                    }} />
+                                                    }} /> */}
                                                 </div>
 
                                                 <div className="delete_course_confirm_container">

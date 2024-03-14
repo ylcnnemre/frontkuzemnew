@@ -1,0 +1,19 @@
+#primaryButton {
+    background: #7f56d9;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border: none;
+    white-space: nowrap;
+    min-width: 6rem;
+  
+    &:hover {
+      background: gray;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      border-bottom-right-radius: 20px;
+      border-bottom-left-radius: 20px;
+    }
+  
+  }

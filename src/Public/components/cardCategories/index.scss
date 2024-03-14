@@ -1,0 +1,39 @@
+
+#card{
+    width: 97%;
+    // @media only screen and (max-width: 768px) {
+    //     padding: 10px;
+    //     display: flex;
+    //     flex-direction: column;
+    //     align-items: center;
+        
+    //   }
+    
+   
+#cardBody {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    #cardTitle {
+        display: flex;
+        justify-content: center;
+        font-size: 80%;
+        padding-top: 20%;
+        white-space: nowrap;
+    }
+
+
+    #imgCard {
+padding-top: 2%;
+        width: 35%;
+    }
+
+
+}
+
+
+}
+
+

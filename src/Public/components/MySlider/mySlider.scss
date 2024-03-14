@@ -1,0 +1,17 @@
+.contDot {
+    display: flex;
+    justify-content: center;
+
+    #dot {
+        width: 10%;
+    }
+
+}
+
+#dot {
+    transition: transform 0.3s ease;
+}
+
+#dot.flip {
+    transform: rotate(180deg);
+}
