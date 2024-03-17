@@ -2,13 +2,17 @@ import useFetch from "../hooks/useFetch";
 import { axiosInstance } from "./axiosInstance";
 
 const GetAllBranch = () => useFetch("/branch/all")
-const getAllBranch = () => axiosInstance.get("/branch/all")
+const getAllBranch = (data) => axiosInstance.post("/branches/getAll",data)
 
-const createBranch = (data) => axiosInstance.post("/branch/create", data)
+const createBranch = (data) => axiosInstance.post("/branches/add", data)
 
-const updateBranchApi = (data)=> axiosInstance.put("/branch", data)
+const updateBranchApi = (data)=> axiosInstance.put("/branches/update", data)
 
-const deleteBranchApi = (id) => axiosInstance.delete(`/branch/${id}`)
+const deleteBranchApi = (id) => axiosInstance.delete(`/branches/delete`,{
+    data : {
+        id : id
+    }
+})
 export {
     GetAllBranch,
     createBranch,

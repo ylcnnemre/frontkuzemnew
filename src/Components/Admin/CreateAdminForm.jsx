@@ -23,10 +23,6 @@ const CreateAdminForm = () => {
             phone: "",
             birthDate: "",
             gender: "erkek",
-            permission: [{
-                label: "Öğrenci Düzenle",
-                value: Permission.STUDENT_ADD
-            }]
         },
         validationSchema: yup.object({
             email: yup.string().email().required(),
@@ -41,7 +37,7 @@ const CreateAdminForm = () => {
                 .matches(/^[0-9]+$/, "T.C. Kimlik Numarası sadece rakamlardan oluşmalıdır.")
                 .required("T.C. Kimlik Numarası boş bırakılamaz."),
             birthDate: yup.date().max(eighteenYearsAgo, 'You must be at least 18 years old.').min(eightyYearsAgo, 'You must be at most 80 years old.').required("Doğum Tarihi Seçiniz"),
-            permission: yup.array().min(1).required()
+
         }),
         onSubmit: async (value, { resetForm }) => {
             try {
@@ -261,27 +257,7 @@ const CreateAdminForm = () => {
                                 </select>
                             </div>
                         </Col>
-                        <Col lg={12}>
-                            <div className="mb-3">
-                                <Label htmlFor="emailInput" className="form-label">
-                                    İzinler
-                                </Label>
-                                <Select
-                                    isMulti
-                                    options={permissionOptions}
-                                    value={formik.values.permission}
-                                    className={`basic-multi-select ${formik.touched.permission && formik.errors.permission ? 'is-invalid' : ''}`}
 
-                                    classNamePrefix="select"
-                                    onChange={(e) => {
-                                        formik.setFieldValue("permission", e)
-                                    }} onBlur={formik.handleBlur}
-                                />
-                                {formik.touched.permission && formik.errors.permission ? (
-                                    <FormFeedback type="invalid"><div>{formik.errors.permission}</div></FormFeedback>
-                                ) : null}
-                            </div>
-                        </Col>
                         <Col lg={12}>
                             <div className="hstack gap-2 justify-content-end">
                                 <button type="submit"

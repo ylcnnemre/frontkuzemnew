@@ -28,18 +28,6 @@ const BranchTable = () => {
             selector: (row) => <span> {row?.name} </span>,
         },
         {
-            name: "Açıklama",
-            selector: (row) => <span> {row?.description.substring(0, 20) + "..."} </span>,
-        },
-        {
-            name: "Oluşturan",
-            selector: (row) => (
-                <span>
-                    {row.createdByUser[0].name}  {row.createdByUser[0].surname}
-                </span>
-            )
-        },
-        {
             name: "Düzenle",
             selector: (row) => {
                 console.log("row =>", row)
@@ -47,10 +35,9 @@ const BranchTable = () => {
 
                     <div className="d-flex gap-2">
                         <Button color="warning" onClick={() => {
-                            const selectedBranch = branch.find(el => el._id == row._id)
+                            const selectedBranch = branch.find(el => el.id == row.id)
                             formik.setFieldValue("name", selectedBranch?.name)
-                            formik.setFieldValue("description", selectedBranch?.description)
-                            formik.setFieldValue("id", selectedBranch?._id)
+                            formik.setFieldValue("id", selectedBranch?.id)
                             setModalShow({
                                 type: "edit",
                                 show: true
@@ -60,7 +47,7 @@ const BranchTable = () => {
                         </Button>
                         <Button color='danger' style={{ marginLeft: "20px" }} onClick={async () => {
                             setDeleteModalShow({
-                                branchId: row._id,
+                                branchId: row.id,
                                 show: true
                             })
                         }} >
@@ -76,8 +63,17 @@ const BranchTable = () => {
     useEffect(() => {
         const fetchBranches = async () => {
             try {
-                const branches = await getAllBranch();
-                setBranch(branches.data);
+                const branches = await getAllBranch({
+                    page : 0,
+                    pageSize: 10
+                });
+                console.log("branches =>",branches)
+                const list=[]
+                for(let item=0;item<1;item++){
+                    list.push(branches.data.items[0])
+                }
+                console.log("list =>",list)
+                setBranch(branches.data.items);
             } catch (err) {
                 console.error("Error fetching branches:", err);
             }
@@ -94,11 +90,9 @@ const BranchTable = () => {
         initialValues: {
             id: "",
             name: "",
-            description: ""
         },
         validationSchema: yup.object({
             name: yup.string().required("İsim Giriniz"),
-            description: yup.string().required("Açıklama giriniz")
         }),
         onSubmit: async (value, { resetForm }) => {
             try {
@@ -106,9 +100,12 @@ const BranchTable = () => {
                     console.log("vale =>", value)
                     const response = await createBranch({
                         name: value.name,
-                        description: value.description
                     })
-                    setBranch(response.data.map(el => el))
+                    console.log("resp =>",response)
+                    setBranch([...branch,{
+                        id : response.data.data.id,
+                        name : value.name
+                    }])
                     toast.success("branş kayıt edildi", {
                         autoClose: 1000
                     })
@@ -121,7 +118,16 @@ const BranchTable = () => {
                 else {
                     console.log("val =>", value)
                     const response = await updateBranchApi(value)
-                    setBranch(response.data.map(el => el))
+                    console.log("resp =>",response)
+                    setBranch(branch.map(el => {
+                        if(el.id==value.id){
+                            return {
+                                id : el.id,
+                                name : value.name
+                            }
+                        }
+                        return el
+                    }))
                     toast.success("branş kayıt edildi", {
                         autoClose: 1000
                     })
@@ -169,6 +175,13 @@ const BranchTable = () => {
                 data={filteredData}
                 columns={columns}
                 pagination
+                onChangePage={(el)=>{
+                    console.log("el =>",el)
+                }}
+                
+                onChangeRowsPerPage={(per)=>{
+                    console.log("per =>",per)
+                }}
                 noDataComponent={
                     <Card className="w-100 p-5">
                         <center>
@@ -177,6 +190,7 @@ const BranchTable = () => {
                     </Card>
                 }
                 paginationComponentOptions={{
+                    noRowsPerPage:true,
                     rowsPerPageText: "Satır Sayısı",
                     rangeSeparatorText: "-",
                 }}
@@ -208,24 +222,6 @@ const BranchTable = () => {
                                 />
                                 {formik.touched.name && formik.errors.name ? (
                                     <FormFeedback type="invalid"><div>{formik.errors.name}</div></FormFeedback>
-                                ) : null}
-                            </div>
-                        </Col>
-                        <Col lg={12}>
-                            <div className="mb-3">
-                                <Label htmlFor="firstnameInput" className="form-label">
-                                    Açıklama
-                                </Label>
-                                <Input type="textarea" className="form-control" id="name" name='description'
-                                    style={{ resize: "none" }}
-                                    placeholder='açıklama'
-                                    value={formik.values.description} onChange={formik.handleChange} onBlur={formik.handleBlur}
-                                    invalid={
-                                        formik.touched.description && formik.errors.description ? true : false
-                                    }
-                                />
-                                {formik.touched.description && formik.errors.description ? (
-                                    <FormFeedback type="invalid"><div>{formik.errors.description}</div></FormFeedback>
                                 ) : null}
                             </div>
                         </Col>
@@ -262,7 +258,7 @@ const BranchTable = () => {
                         try {
                             await deleteBranchApi(deleteModalShow.branchId)
 
-                            setBranch(branch.filter(el => el._id !== deleteModalShow.branchId))
+                            setBranch(branch.filter(el => el.id !== deleteModalShow.branchId))
 
                             setDeleteModalShow({
                                 show: false,

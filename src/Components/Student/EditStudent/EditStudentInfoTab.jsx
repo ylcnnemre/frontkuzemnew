@@ -5,7 +5,7 @@ import { useFormik } from 'formik'
 import { toast } from 'react-toastify'
 import * as yup from "yup"
 import { Col, Form, FormFeedback, Input, Label, Row } from 'reactstrap'
-import {cityList} from "../../constants/cityList"
+import { cityList } from "../../constants/cityList"
 import { getUserByIdApi, updateUserApi } from '../../../api/UserApi'
 
 
@@ -16,8 +16,8 @@ const eightyYearsAgo = new Date(today.getFullYear() - 80, today.getMonth(), toda
 const EditStudentInfoTab = () => {
     const navigate = useNavigate()
     const { id } = useParams()
-    const [loading, setLoading] = useState (false)
-    const [region, setRegion] = useState ([])
+    const [loading, setLoading] = useState(false)
+    const [region, setRegion] = useState([])
 
 
     const setStudentProfileData = async (data) => {
@@ -53,35 +53,25 @@ const EditStudentInfoTab = () => {
             birthDate: "",
             email: "",
             gender: "erkek",
-            name: "",
+            firstName: "",
             phone: "",
-            role: "student",
-            surname: "",
-            tcNo: "",
-            city: "",
-            region: "",
-            courses: [],
-            postalCode: 0
+            lastName: "",
+            tc: "",
         },
         validationSchema: yup.object({
             email: yup.string().email().required(),
-            name: yup.string().required(),
-            surname: yup.string().required(),
+            firstName: yup.string().required(),
+            lastName: yup.string().required(),
             phone: yup.string(),
             birthDate: yup.date().max(eighteenYearsAgo, 'You must be at least 18 years old.').min(eightyYearsAgo, 'You must be at most 80 years old.').required("Doğum Tarihi Seçiniz"),
         }),
         onSubmit: async (value) => {
             try {
-                const { city, region, postalCode, email, phone, tcNo, role, courses, ...rest } = value
+                const { birthDate,...rest } = value
                 console.log("vall =>", value)
                 let response = await updateUserApi({
                     ...rest,
-                    address: {
-                        city,
-                        region,
-                        postalCode,
-                        additionalInfo: ""
-                    }
+                    birthDate : new Date(birthDate).toUTCString()
                 })
                 toast.success("güncelleme başarılı", {
                     autoClose: 1000
@@ -138,14 +128,14 @@ const EditStudentInfoTab = () => {
                         <Label htmlFor="firstnameInput" className="form-label">
                             İsim
                         </Label>
-                        <Input type="text" className="form-control" id="name" name='name'
-                            value={formik.values.name} onChange={formik.handleChange} onBlur={formik.handleBlur}
+                        <Input type="text" className="form-control" id="firstName" name='firstName'
+                            value={formik.values.firstName} onChange={formik.handleChange} onBlur={formik.handleBlur}
                             invalid={
-                                formik.touched.name && formik.errors.name ? true : false
+                                formik.touched.firstName && formik.errors.firstName ? true : false
                             }
                         />
-                        {formik.touched.name && formik.errors.name ? (
-                            <FormFeedback type="invalid"><div>{formik.errors.name}</div></FormFeedback>
+                        {formik.touched.firstName && formik.errors.firstName ? (
+                            <FormFeedback type="invalid"><div>{formik.errors.firstName}</div></FormFeedback>
                         ) : null}
                     </div>
                 </Col>
@@ -154,14 +144,14 @@ const EditStudentInfoTab = () => {
                         <Label htmlFor="lastnameInput" className="form-label">
                             Soyisim
                         </Label>
-                        <Input type="text" className="form-control" id="surname"
-                            placeholder="Soyadı" name='surname' value={formik.values.surname} onChange={formik.handleChange} onBlur={formik.handleBlur}
+                        <Input type="text" className="form-control" id="lastName"
+                            placeholder="Soyadı" name='lastName' value={formik.values.lastName} onChange={formik.handleChange} onBlur={formik.handleBlur}
                             invalid={
-                                formik.touched.surname && formik.errors.name ? true : false
+                                formik.touched.lastName && formik.errors.lastName ? true : false
                             }
                         />
-                        {formik.touched.surname && formik.errors.surname ? (
-                            <FormFeedback type="invalid"><div>{formik.errors.surname}</div></FormFeedback>
+                        {formik.touched.lastName && formik.errors.lastName ? (
+                            <FormFeedback type="invalid"><div>{formik.errors.lastName}</div></FormFeedback>
                         ) : null}
                     </div>
                 </Col>
@@ -171,7 +161,7 @@ const EditStudentInfoTab = () => {
                             Tc No
                         </Label>
                         <Input type="text" className="form-control disabled-input"
-                            value={formik.values.tcNo}
+                            value={formik.values.tc}
                             disabled
                         />
                     </div>
@@ -194,7 +184,7 @@ const EditStudentInfoTab = () => {
                         />
                     </div>
                 </Col>
-                <Col lg={6}>
+                <Col lg={4}>
                     <div className="mb-3">
                         <Label htmlFor="phonenumberInput" className="form-label">
                             Telefon
@@ -207,7 +197,7 @@ const EditStudentInfoTab = () => {
                         />
                     </div>
                 </Col>
-                <Col lg={6}>
+                <Col lg={4}>
                     <div className="mb-3">
                         <Label htmlFor="emailInput" className="form-label ">Email</Label>
                         <Input type="email" className="form-control disabled-input"
@@ -232,90 +222,17 @@ const EditStudentInfoTab = () => {
                         </select>
                     </div>
                 </Col>
-                <Col lg={4}>
-                    <div className="mb-3">
-                        <Label htmlFor="emailInput" className="form-label">
-                            Rol
-                        </Label>
-                        <Input type="text" className="form-control disabled-input"
-                            name='role'
-                            value={formik.values.role}
-                            disabled
-                        />
-                    </div>
-                </Col>
-                <Col lg={4}>
-                    <div className="mb-3">
-                        <Label htmlFor="city" className="form-label">
-                            Şehir
-                        </Label>
-                        <select name="city" id="city" className='form-control' value={formik.values.city} onChange={(event) => {
-                            if (event.target.value !== "") {
-                                setRegion(cityList.find(item => item.state == event.target.value)?.region)
-                                formik.setFieldValue("region", "")
-                                formik.handleChange(event)
-                            }
-                            else {
-                                formik.handleChange(event)
-                                formik.setFieldValue("region", "")
-                            }
-                        }} >
-                            <option value="">
-                                Seçim
-                            </option>
-                            {
-                                cityList.map((item, index) => {
-                                    return (
-                                        <option key={`${index}`} value={item.state}  >
-                                            {item.state}
-                                        </option>
-                                    )
-                                })
-                            }
-                        </select>
-                    </div>
-                </Col>
-                <Col lg={4}>
-                    <div className="mb-3">
-                        <Label htmlFor="region" className="form-label">
-                            İlçe
-                        </Label>
-                        <select name="region" id="region" onChange={formik.handleChange} className='form-control' value={formik.values.region} onBlur={formik.handleBlur}  >
-                            <option value="">
-                                Seçim
-                            </option>
-                            {
-                                region.map((item, index) => {
-                                    return (
-                                        <option key={`${index}`} value={item}>
-                                            {item}
-                                        </option>
-                                    )
-                                })
-                            }
-                        </select>
-                    </div>
-                </Col>
-                <Col lg={4}>
-                    <div className="mb-3">
-                        <Label htmlFor="region" className={`form-label`}  >
-                            Posta Kodu
-                        </Label>
-                        <Input type="number" className={`form-control ${postalCodeDisableControl ? "disabled-input" : ""}  `}
-                            name='postalCode'
-                            disabled={postalCodeDisableControl}
-                            value={formik.values.postalCode}
-                            onChange={formik.handleChange}
-                        />
-                    </div>
-                </Col>
+
                 <Col lg={12}>
                     <div className="hstack gap-2 justify-content-end">
                         <button type="submit"
                             className="btn btn-warning">
                             Güncelle
                         </button>
-
+                        <button type="submit"
+                            className="btn btn-danger">
+                            Bu Öğrenciyi sil
+                        </button>
                     </div>
                 </Col>
 

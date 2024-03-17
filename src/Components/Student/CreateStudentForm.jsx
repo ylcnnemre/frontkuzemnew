@@ -2,59 +2,73 @@ import React from 'react'
 import { Col, Form, FormFeedback, Input, Label, Row } from 'reactstrap'
 import * as yup from "yup"
 import { toast } from 'react-toastify';
-import { createUserApi } from '../../api/UserApi';
+import { UserOperationClaimApi, createUserApi } from '../../api/UserApi';
 import { useFormik } from 'formik';
 
 const today = new Date();
 const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
 const eightyYearsAgo = new Date(today.getFullYear() - 80, today.getMonth(), today.getDate());
 
+const testv = {
+    "firstName": "string",
+    "lastName": "string",
+    "email": "string",
+    "tc": "string",
+    "gender": "string",
+    "adress": "string",
+    "phone": "string",
+    "birthDate": "2024-03-17T10:07:16.934Z"
+}
 const CreateStudentForm = () => {
     const formik = useFormik({
         initialValues: {
-            name: "",
-            surname: "",
-            tcNo: "",
+            firstName: "",
+            lastName: "",
+            tc: "",
             email: "",
             phone: "",
             birthDate: "",
             gender: "erkek",
+            adress: ""
         },
         validationSchema: yup.object({
             email: yup.string().email().required(),
-            name: yup.string().required(),
-            surname: yup.string().required(),
+            firstName: yup.string().required(),
+            lastName: yup.string().required(),
             phone: yup.string()
-                .matches(/^(\d{10})$/, "Geçerli bir Türkiye telefon numarası girin") // Türkiye telefon numarası formatı (Başında 0 ve 10 rakam)
+                .matches(/^(\d{11})$/, "Geçerli bir Türkiye telefon numarası girin") // Türkiye telefon numarası formatı (Başında 0 ve 10 rakam)
                 .required("Telefon numarası boş bırakılamaz"),
-            tcNo: yup
+            tc: yup
                 .string()
                 .length(11, "T.C. Kimlik Numarası 11 haneli olmalıdır.")
                 .matches(/^[0-9]+$/, "T.C. Kimlik Numarası sadece rakamlardan oluşmalıdır.")
                 .required("T.C. Kimlik Numarası boş bırakılamaz."),
             birthDate: yup.date().max(eighteenYearsAgo, 'You must be at least 18 years old.').min(eightyYearsAgo, 'You must be at most 80 years old.').required("Doğum Tarihi Seçiniz"),
-
+            adress: yup.string().required().max(1000)
         }),
         onSubmit: async (value, { resetForm }) => {
             try {
+                const { birthDate, ...rest } = value
                 console.log("valuee ==>", value)
-                const { gender, tcNo, birthDate, ...rest } = value
-                const requestBody = {
+                const response = await createUserApi({
                     ...rest,
-                    tcNo: `${tcNo}`,
-                    gender: gender,
-                    birthDate: new Date(birthDate).toISOString().split('T')[0],
-                    role: "student"
-                }
-                const response = await createUserApi(requestBody)
+                    birthDate : new Date(birthDate).toUTCString()
+                })
+                console.log("resp ?=>",response.data)
+                await UserOperationClaimApi({
+                    id : response.data.data.userOperationClaimId,
+                    userId : response.data.data.userId,
+                    operationClaimId : 3
+                })
+                console.log("response ==>", response)
                 toast.success("Öğrenci kayıt edildi", {
                     autoClose: 1000
                 })
-                resetForm()
+               /*  resetForm() */
             }
             catch (err) {
                 console.log("err =>", err)
-                toast.error(err.response.data.message, {
+                toast.error(err.message, {
                     autoClose: 1500
                 })
             }
@@ -69,15 +83,15 @@ const CreateStudentForm = () => {
                         <Label htmlFor="firstnameInput" className="form-label">
                             İsim
                         </Label>
-                        <Input type="text" className="form-control" id="name" name='name'
+                        <Input type="text" className="form-control" id="name" name='firstName'
                             placeholder='isim'
-                            value={formik.values.name} onChange={formik.handleChange} onBlur={formik.handleBlur}
+                            value={formik.values.firstName} onChange={formik.handleChange} onBlur={formik.handleBlur}
                             invalid={
-                                formik.touched.name && formik.errors.name ? true : false
+                                formik.touched.firstName && formik.errors.firstName ? true : false
                             }
                         />
-                        {formik.touched.name && formik.errors.name ? (
-                            <FormFeedback type="invalid"><div>{formik.errors.name}</div></FormFeedback>
+                        {formik.touched.firstName && formik.errors.firstName ? (
+                            <FormFeedback type="invalid"><div>{formik.errors.firstName}</div></FormFeedback>
                         ) : null}
                     </div>
                 </Col>
@@ -86,14 +100,14 @@ const CreateStudentForm = () => {
                         <Label htmlFor="lastnameInput" className="form-label">
                             Soyisim
                         </Label>
-                        <Input type="text" className="form-control" id="surname"
-                            placeholder="Soyisim" name='surname' value={formik.values.surname} onChange={formik.handleChange} onBlur={formik.handleBlur}
+                        <Input type="text" className="form-control" id="lastName"
+                            placeholder="Soyisim" name='lastName' value={formik.values.lastName} onChange={formik.handleChange} onBlur={formik.handleBlur}
                             invalid={
-                                formik.touched.surname && formik.errors.name ? true : false
+                                formik.touched.lastName && formik.errors.firstName ? true : false
                             }
                         />
-                        {formik.touched.surname && formik.errors.surname ? (
-                            <FormFeedback type="invalid"><div>{formik.errors.surname}</div></FormFeedback>
+                        {formik.touched.lastName && formik.errors.lastName ? (
+                            <FormFeedback type="invalid"><div>{formik.errors.lastName}</div></FormFeedback>
                         ) : null}
                     </div>
                 </Col>
@@ -104,16 +118,16 @@ const CreateStudentForm = () => {
                         </Label>
                         <Input type="text" className="form-control "
                             placeholder='Tc No'
-                            name='tcNo'
-                            value={formik.values.tcNo}
+                            name='tc'
+                            value={formik.values.tc}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             invalid={
-                                formik.touched.tcNo && formik.errors.tcNo ? true : false
+                                formik.touched.tc && formik.errors.tc ? true : false
                             }
                         />
-                        {formik.touched.tcNo && formik.errors.tcNo ? (
-                            <FormFeedback type="invalid"><div>{formik.errors.tcNo}</div></FormFeedback>
+                        {formik.touched.tc && formik.errors.tc ? (
+                            <FormFeedback type="invalid"><div>{formik.errors.tc}</div></FormFeedback>
                         ) : null}
                     </div>
                 </Col>
@@ -188,12 +202,32 @@ const CreateStudentForm = () => {
                                 Erkek
                             </option>
                             <option value="kadın">
-                               Kadın
+                                Kadın
                             </option>
                         </select>
                     </div>
                 </Col>
-
+                <Col lg={12}>
+                    <div className="mb-3">
+                        <Label htmlFor="adress" className="form-label">
+                            Address
+                        </Label>
+                        <Input type="textarea" className="form-control "
+                            style={{ resize: "none" }}
+                            placeholder='Adres'
+                            name='adress'
+                            value={formik.values.adress}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            invalid={
+                                formik.touched.adress && formik.errors.adress ? true : false
+                            }
+                        />
+                        {formik.touched.adress && formik.errors.adress ? (
+                            <FormFeedback type="invalid"><div>{formik.errors.adress}</div></FormFeedback>
+                        ) : null}
+                    </div>
+                </Col>
                 <Col lg={12}>
                     <div className="hstack gap-2 justify-content-end">
                         <button type="submit"

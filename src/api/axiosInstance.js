@@ -3,17 +3,17 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 //const baseURL = "http://3.126.250.198:8000//api";
-const baseURL = "http://localhost:3000";
+const baseURL = "https://localhost:7006/api";
 
 const axiosInstance = axios.create({
     baseURL,
 });
 
 axiosInstance.interceptors.request.use((config) => {
-    const token = localStorage.getItem("authToken");
+    /* const token = localStorage.getItem("authToken");
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
-    }
+    } */
 
     //console.log(config)
     return config;

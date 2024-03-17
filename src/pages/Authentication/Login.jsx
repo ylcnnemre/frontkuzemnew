@@ -35,11 +35,15 @@ const Login = (props) => {
     const validation = useFormik({
         enableReinitialize: true,
         initialValues: {
-            email: userLogin.email || "",
+            tc: userLogin.tc || "",
             password: userLogin.password || "",
         },
         validationSchema: Yup.object({
-            email: Yup.string().required("Email boş olamaz."),
+            tc: Yup
+                .string()
+                .length(11, "T.C. Kimlik Numarası 11 haneli olmalıdır.")
+                .matches(/^[0-9]+$/, "T.C. Kimlik Numarası sadece rakamlardan oluşmalıdır.")
+                .required("T.C. Kimlik Numarası boş bırakılamaz."),
             password: Yup.string().required("Şifre boş olamaz."),
         }),
         onSubmit: async (values) => {
@@ -96,32 +100,32 @@ const Login = (props) => {
                                                     >
                                                         <div className="mb-3">
                                                             <Label
-                                                                htmlFor="email"
+                                                                htmlFor="tc"
                                                                 className="form-label"
                                                             >
-                                                                Kullanıcı adı
+                                                                Tc No
                                                             </Label>
                                                             <Input
-                                                                name="email"
+                                                                name="tc"
                                                                 className="form-control"
-                                                                placeholder="Kullanıcı adınızı giriniz"
-                                                                type="email"
+                                                                placeholder="Tc No"
+                                                                type="text"
                                                                 onChange={validation.handleChange}
                                                                 onBlur={validation.handleBlur}
                                                                 value={
-                                                                    validation.values.email || ""
+                                                                    validation.values.tc || ""
                                                                 }
                                                                 invalid={
-                                                                    validation.touched.email &&
-                                                                        validation.errors.email
+                                                                    validation.touched.tc &&
+                                                                        validation.errors.tc
                                                                         ? true
                                                                         : false
                                                                 }
                                                             />
-                                                            {validation.touched.email &&
-                                                                validation.errors.email ? (
+                                                            {validation.touched.tc &&
+                                                                validation.errors.tc ? (
                                                                 <FormFeedback type="invalid">
-                                                                    {validation.errors.email}
+                                                                    {validation.errors.tc}
                                                                 </FormFeedback>
                                                             ) : null}
                                                         </div>

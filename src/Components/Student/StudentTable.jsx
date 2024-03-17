@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { getStudentListApi } from '../../api/UserApi'
 import { toast } from 'react-toastify'
 import { MdModeEdit } from 'react-icons/md'
@@ -13,8 +13,14 @@ const StudentTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const getUserDataList = async () => {
     try {
-      const response = await getStudentListApi()
-      setStudentList(response.data)
+      const response = await getStudentListApi({
+        page: 0,
+        pageSize: 10
+      })
+      console.log("resp => ", response)
+      const data = response.data.items.filter(el => el.claimName == "ogrenci")
+      console.log("data =>", data)
+      setStudentList(response.data.items.filter(el => el.claimName == "ogrenci"))
     }
     catch (err) {
       toast.error(err.response.data.message, {
@@ -30,19 +36,15 @@ const StudentTable = () => {
   const columns = [
     {
       name: "İsim",
-      selector: (row) => <span> {row?.name} </span>,
+      selector: (row) => <span> {row?.firstName} </span>,
     },
     {
-      name: "Dönem",
-      selector: (row) => <span style={{ textTransform: "capitalize" }}> {row?.surname} </span>,
+      name: "Soyisim",
+      selector: (row) => <span style={{ textTransform: "capitalize" }}> {row?.lastName} </span>,
     },
     {
       name: "Email",
       selector: (row) => <span style={{ textTransform: "capitalize" }}> {row?.email} </span>,
-    },
-    {
-      name: "Tc No",
-      selector: (row) => <span style={{ textTransform: "capitalize" }}> {row?.tcNo} </span>,
     },
     {
       name: "Telefon",
@@ -56,13 +58,11 @@ const StudentTable = () => {
 
           <div className="d-flex gap-2">
             <Button color="warning" onClick={() => {
-              navigate(`/panel/ogrenci/duzenle/${row._id}`)
+              navigate(`/panel/ogrenci/duzenle/${row.id}`)
             }}  >
               <MdModeEdit />
             </Button>
-            <Button color='danger' style={{ marginLeft: "20px" }} >
-              <BsTrash />
-            </Button>
+    
           </div>
 
         )
@@ -71,10 +71,15 @@ const StudentTable = () => {
   ];
 
 
-  const filteredData = studentList?.filter((item) => {
-    const lowercaseSearchTerm = searchTerm.toLowerCase();
-    return item?.name.toLowerCase().includes(lowercaseSearchTerm);
-  });
+  const filteredData = useMemo(() => {
+    if (studentList.length !== 0) {
+      return studentList?.filter((item) => {
+        const lowercaseSearchTerm = searchTerm?.toLowerCase();
+        return item?.firstName?.toLowerCase()?.includes(lowercaseSearchTerm);
+      })
+    }
+    return []
+  }, [studentList,searchTerm]);
 
   return (
     <>

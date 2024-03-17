@@ -15,6 +15,7 @@ const ProfileDropdown = () => {
         setIsProfileDropdown(!isProfileDropdown);
     };
     const navigate = useNavigate()
+    console.log("sta => ",state)
     return (
         <React.Fragment>
             <Dropdown
@@ -31,7 +32,7 @@ const ProfileDropdown = () => {
                         />
                         <span className="text-start ms-xl-2">
                             <span className="d-none d-xl-inline-block ms-1 fw-medium user-name-text">
-                                {state.name + " " + state.surname}
+                                {state.UserAndLastname}
                             </span>
                         </span>
                     </span>

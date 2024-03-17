@@ -1,11 +1,16 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { Col, Form, FormFeedback, Input, Label, Row, TabPane } from 'reactstrap'
 import withRouter from '../Common/withRouter'
 import { withTranslation } from 'react-i18next'
 import { useFormik } from 'formik'
 import * as yup from "yup"
+import { changePasswordApi } from '../../api/UserApi'
+import { UserContext } from '../../context/user'
+import { toast } from 'react-toastify'
 const ChangePasswordTab = ({ t }) => {
+
+    const [state, dispatch] = useContext(UserContext)
 
     const formik = useFormik({
         initialValues: {
@@ -17,14 +22,29 @@ const ChangePasswordTab = ({ t }) => {
             oldPassword: yup.string().required('Old Password is required'),
             newPassword: yup.string().required('New Password is required'),
             confirmPassword: yup.string()
-                .oneOf([yup.ref('newPassword')], 'Passwords must match')
+                .oneOf([yup.ref('newPassword')], 'Parolalar eşleşmiyor')
                 .required('Confirm Password is required')
         }),
-        onSubmit: (value) => {
-
+        onSubmit: async (value) => {
+            const { oldPassword, newPassword } = value
+            try {
+                const response = await changePasswordApi({
+                    id: state.userId,
+                    oldPassword,
+                    newPassword
+                })
+                console.log("resposne => ", response)
+                toast.success("Parola Güncellendi", { autoClose: 1000 })
+                formik.resetForm()
+            }
+            catch (err) {
+                toast.error(err.message, {
+                    autoClose: 1000
+                })
+            }
         }
     })
-
+    console.log("fomrik => ", formik.errors)
     return (
 
         <Form onSubmit={formik.handleSubmit}>
@@ -82,8 +102,8 @@ const ChangePasswordTab = ({ t }) => {
                             placeholder="Confirm password"
 
                         />
-                        {formik.touched.oldPassword && formik.errors.oldPassword ? (
-                            <FormFeedback type="invalid"><div>{formik.errors.oldPassword}</div></FormFeedback>
+                        {formik.touched.confirmPassword && formik.errors.confirmPassword ? (
+                            <FormFeedback type="invalid"><div>{formik.errors.confirmPassword}</div></FormFeedback>
                         ) : null}
 
                     </div>
@@ -98,7 +118,7 @@ const ChangePasswordTab = ({ t }) => {
 
                 <Col lg={12}>
                     <div className="text-end">
-                        <button type="button" className="btn btn-primary">Onayla</button>
+                        <button type="submit" className="btn btn-primary">Onayla</button>
                     </div>
                 </Col>
 

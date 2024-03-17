@@ -21,7 +21,7 @@ export function UserStore({ children }) {
                     ...rest
                 } = action.payload;
 
-                localStorage.setItem('authToken', accessToken);
+                localStorage.setItem('authToken', accessToken.token);
                 //localStorage.setItem('steps', JSON.stringify({ stepComplete1, stepComplete2, stepComplete3, stepComplete4 }));
 
                 return {

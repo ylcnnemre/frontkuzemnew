@@ -20,7 +20,9 @@ const ProfileDashboard = () => {
 
   const getUserProfileData = async () => {
     try {
-      let response = await getUserByIdApi(state._id)
+      console.log("statAE= ",state)
+      let response = await getUserByIdApi(state.userId)
+      console.log("respo< =",response)
       setUserData(response.data)
     }
     catch (err) {
