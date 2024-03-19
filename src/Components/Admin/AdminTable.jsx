@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { GetAdminListApi } from '../../api/UserApi';
+import React, { useEffect, useState } from 'react'
+import { GetAdminListApi, getUserListApi } from '../../api/UserApi';
 import { Button, Card, Col, Input, Row } from 'reactstrap';
 import { MdModeEdit } from 'react-icons/md';
 import DataTable from 'react-data-table-component';
@@ -8,30 +8,22 @@ import { useNavigate } from 'react-router-dom';
 
 const AdminTable = () => {
     const { data, isLoading } = GetAdminListApi()
+    const [adminList, setAdminList] = useState([])
     const navigate = useNavigate()
 
     const [searchTerm, setSearchTerm] = useState("");
     const columns = [
         {
             name: "Adı",
-            selector: (row) => <span> {row?.name} </span>,
+            selector: (row) => <span> {row?.firstName} </span>,
         },
         {
             name: "Soyadı",
-            selector: (row) => <span> {row?.surname} </span>,
+            selector: (row) => <span> {row?.lastName} </span>,
         },
         {
             name: "Email",
             selector: (row) => <span> {row?.email} </span>,
-        },
-
-        {
-            name: "Tc No",
-            selector: (row) => (
-                <span>
-                    {row.tcNo}
-                </span>
-            ),
         },
         {
             name: "Telefon",
@@ -49,7 +41,7 @@ const AdminTable = () => {
 
                     <div className="d-flex gap-2">
                         <Button color="warning" onClick={() => {
-                              navigate(`/panel/admin/duzenle/${row._id}`)
+                            navigate(`/panel/admin/duzenle/${row.id}`)
                         }} >
                             <MdModeEdit />
                         </Button>
@@ -60,9 +52,28 @@ const AdminTable = () => {
         },
     ];
 
-    const filteredData = data?.filter((item) => {
+    const getAdminList = async () => {
+        try {
+            const response = await getUserListApi({
+                page: 0,
+                pageSize: 10,
+                roleId: 1
+            })
+            setAdminList(response.data.items)
+        }
+        catch (err) {
+
+        }
+    }
+
+    useEffect(() => {
+        getAdminList()
+    }, [])
+
+
+    const filteredData = adminList?.filter((item) => {
         const lowercaseSearchTerm = searchTerm.toLowerCase();
-        return item?.name.toLowerCase().includes(lowercaseSearchTerm);
+        return item?.firstName.toLowerCase().includes(lowercaseSearchTerm);
     });
 
     return (
@@ -103,11 +114,6 @@ const AdminTable = () => {
                 }}
             />
 
-            {isLoading && (
-                <>
-                    <PageLoader />
-                </>
-            )}
         </>
     )
 }

@@ -1,32 +1,33 @@
 import React, { useMemo, useState } from 'react'
 import DataTable from 'react-data-table-component';
 import { useNavigate } from 'react-router-dom';
-import { Button, Card, Col, Input, Row } from 'reactstrap';
-
+import { Button, Card, Col, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
+import { createCourseDatesApi } from '../../../api/bbb';
+import { DatePicker } from 'antd';
+import moment from 'moment';
+import "./index.scss"
 const MyCourseTable = ({ userData }) => {
     const navigate = useNavigate()
     const [searchTerm, setSearchTerm] = useState("");
+    const [createCourseDateModal, setCreateCourseDateModal] = useState({
+        courseId: 0,
+        show: false,
+        duration: 0,
+        startTime: ""
+    })
     console.log("userData =>", userData)
     const columns = [
         {
             name: "İsim",
-            selector: (row) => <span  > {row?.title} </span>,
-        },
-        {
-            name: "Branş",
-            selector: (row) => <span> {row.branch.name}  </span>
-        },
-        {
-            name: "Dönem",
-            selector: (row) => <span style={{ textTransform: "capitalize" }}> {row?.semester.period} </span>,
+            selector: (row) => <span  > {row?.name} </span>,
         },
         {
             name: "Açıklama",
-            selector: (row) => <span> {row?.description.substring(0, 20) + "..."} </span>,
+            selector: (row) => <span> {row.description}  </span>
         },
         {
-            name: "Eğitmen",
-            selector: (row) => <span> {row?.teacher.name}  {row.teacher.surname}  </span>,
+            name: "Kontenjan",
+            selector: (row) => <span style={{ textTransform: "capitalize" }}> {row?.limit} </span>,
         },
         {
             name: "Düzenle",
@@ -35,10 +36,12 @@ const MyCourseTable = ({ userData }) => {
                 return (
                     <div className="d-flex gap-2">
                         <Button color="warning" onClick={() => {
-                            /* setSelectedId(row._id)
-                            setEditMode(true)
-                            setShowModal(true) */
-                            navigate(`/panel/kurs/${row._id}`)
+                            setCreateCourseDateModal({
+                                courseId: row.id,
+                                duration: 0,
+                                show: true,
+                                startTime: ""
+                            })
                         }}  >
                             İncele
                         </Button>
@@ -49,18 +52,84 @@ const MyCourseTable = ({ userData }) => {
         },
     ];
 
-    const tableData = useMemo(() => {
-        return userData?.courses.filter(el => el != null) ?? []
-    }, [userData])
+    /*  const tableData = useMemo(() => {
+         return userData?.courses.filter(el => el != null) ?? []
+     }, [userData]) */
 
-    const filteredData = tableData?.filter((item) => {
+    const filteredData = userData?.filter((item) => {
         const lowercaseSearchTerm = searchTerm.toLowerCase();
-        return item?.title.toLowerCase().includes(lowercaseSearchTerm);
+        return item?.name.toLowerCase().includes(lowercaseSearchTerm);
     });
 
+    const createCourse = async () => {
+        try {
+
+            const response = await createCourseDatesApi({
+                courseId: createCourseDateModal.courseId,
+                duration: createCourseDateModal.duration,
+                startTime: new Date().toUTCString()
+            })
+            console.log("respone => ", response)
+        }
+        catch (err) {
+
+        }
+    }
 
     return (
         <>
+            <Modal isOpen={createCourseDateModal.show} >
+                <ModalHeader>
+                    Canlı Kurs Kaydı Oluştur
+                </ModalHeader>
+                <ModalBody>
+                    <div className='course_date_time' > 
+                        <Label>
+                            Başlangıç Zamanı
+                        </Label>
+                        <DatePicker showTime allowClear={false}  onChange={(e) => {
+                            console.log("ee => ", e.toISOString() )
+                            const utcDate = moment.utc(e).format(); // Tarihi UTC formatına dönüştürme
+                            console.log("UTC Tarih =", utcDate);
+                        }} />
+                    </div>
+                    <Label htmlFor="phonenumberInput" className="form-label">
+                        Süre
+                    </Label>
+                    <Input
+                        name="birthDate"
+
+                        type="number"
+                        placeholde1r="Süre"
+                        onChange={(e) => {
+                            setCreateCourseDateModal({
+                                ...createCourseDateModal,
+                                duration: e.target.value
+                            })
+                        }}
+                    />
+
+                </ModalBody>
+                <ModalFooter>
+                    <Button onClick={() => {
+                        createCourse()
+                    }} >
+                        Onayla
+                    </Button>
+                    <Button className="btn btn-danger" onClick={() => {
+                        setCreateCourseDateModal({
+                            courseId: "",
+                            duration: 0,
+                            show: false,
+                            startTime: ""
+                        })
+                    }} >
+                        İptal
+                    </Button>
+                </ModalFooter>
+            </Modal>
+
+
             <Row className="mb-2">
                 <Col lg={2}>
                     <Input

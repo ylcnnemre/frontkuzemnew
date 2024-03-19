@@ -1,6 +1,12 @@
 import { axiosInstance } from "./axiosInstance";
 
-const getAllCourseByStatusApi = (status) => axiosInstance.get(`/course/all/${status}`)
+const getAllCourseByStatusApi = () => axiosInstance.post(`/Courses/GetAll`, {
+    page: 0,
+    pageSize: 10
+})
+
+const GetAllForRegisteredStudentAndTeacher = (data) => axiosInstance.post("/courses/GetAllForRegisteredStudentAndTeacher", data)
+
 
 const getDetailCourseApi = (id) => axiosInstance.get(`/course/${id}`)
 
@@ -11,6 +17,8 @@ const createCourseApi = (data) => axiosInstance.post("/course/create", data, {
         "Content-Type": "multipart/form-data"
     }
 })
+
+const addCourseAdministrators = (data) => axiosInstance.post("/CourseAdministrators/Add", data)
 
 const deleteCourseApi = (data) => axiosInstance.delete("/course/delete", {
     data: {
@@ -74,5 +82,7 @@ export {
     updateCourseProgramApi,
     deleteAnnouncementApi,
     createAnnouncementApi,
-    updateAnnouncementApi
+    updateAnnouncementApi,
+    addCourseAdministrators,
+    GetAllForRegisteredStudentAndTeacher
 }

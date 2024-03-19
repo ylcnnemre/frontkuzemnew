@@ -92,29 +92,16 @@ const UpdateAdminForm = () => {
                 if (key != "address") {
                     formik.setFieldValue(key, val)
                 }
-                else {
-                    const address = val
-                    formik.setFieldValue("city", address.city)
-                    formik.setFieldValue("postalCode", address.postalCode)
-                    if (address.city !== "") {
-                        setRegion(cityList.find(item => item.state == address.city)?.region)
-                        formik.setFieldValue("region", address.region)
-                    }
-                }
             })
+            console.log("data => ", data)
             const formatBirthDate = new Date(birthDate).toISOString().split('T')[0];
             formik.setFieldValue('birthDate', formatBirthDate);
-            formik.setFieldValue("branch", branch?.name)
-            console.log("permm ==>", permission)
-            formik.setFieldValue("permission", [...permission.map(item => {
-                return {
-                    label: permissionOptions.find(el => el.value == item)?.label,
-                    value: item
-                }
-            })])
+
         }
         catch (err) {
-            toast.error(err.response.data.message)
+            toast.error(err.message, {
+                autoClose: 1000
+            })
         }
     }
     const apiRequest = async () => {
@@ -125,10 +112,10 @@ const UpdateAdminForm = () => {
             setAdminProfileData(responseAdmin.data)
         }
         catch (err) {
-            toast.error(err.response.data.message, {
+            toast.error(err.message, {
                 autoClose: 1000
             })
-            navigate("/egitmen")
+            /* navigate("/egitmen") */
         }
         finally {
             setLoading(false)
@@ -145,32 +132,22 @@ const UpdateAdminForm = () => {
             birthDate: "",
             email: "",
             gender: "erkek",
-            name: "",
+            firstName: "",
             phone: "",
-            role: "student",
-            surname: "",
-            tcNo: "",
-            city: "",
-            region: "",
-            courses: [],
-            postalCode: 0,
-            permission: [{
-                label: "",
-                value: ""
-            }]
+            lastName: "",
+            tc: "",
         },
         validationSchema: yup.object({
             email: yup.string().email().required(),
-            name: yup.string().required(),
-            surname: yup.string().required(),
+            firstName: yup.string().required(),
+            lastName: yup.string().required(),
             phone: yup.string(),
-            permission: yup.array().min(1).required(),
             birthDate: yup.date().max(eighteenYearsAgo, 'You must be at least 18 years old.').min(eightyYearsAgo, 'You must be at most 80 years old.').required("Doğum Tarihi Seçiniz"),
 
         }),
         onSubmit: async (value) => {
             try {
-                const { city, region, postalCode, email, phone, tcNo, role, courses, permission, ...rest } = value
+                const { city, region, postalCode, email, phone, tc: tcNo, role, courses, permission, ...rest } = value
                 console.log("vall =>", value)
                 let response = await updateUserApi({
                     ...rest,
@@ -195,9 +172,7 @@ const UpdateAdminForm = () => {
         }
     })
 
-    const postalCodeDisableControl = useMemo(() => {
-        return formik.values.city == "" || formik.values.region == ""
-    }, [formik.values.city, formik.values.region])
+
 
 
     if (loading) {
@@ -233,7 +208,7 @@ const UpdateAdminForm = () => {
                 </NavItem>
 
             </Nav>
-            <TabContent activeTab={activeTab} style={{paddingTop:"20px"}} >
+            <TabContent activeTab={activeTab} style={{ paddingTop: "20px" }} >
                 <TabPane tabId={1} >
                     <Form onSubmit={formik.handleSubmit}>
                         <Row>
@@ -243,13 +218,13 @@ const UpdateAdminForm = () => {
                                         İsim
                                     </Label>
                                     <Input type="text" className="form-control" id="name" name='name'
-                                        value={formik.values.name} onChange={formik.handleChange} onBlur={formik.handleBlur}
+                                        value={formik.values.firstName} onChange={formik.handleChange} onBlur={formik.handleBlur}
                                         invalid={
-                                            formik.touched.name && formik.errors.name ? true : false
+                                            formik.touched.firstName && formik.errors.firstName ? true : false
                                         }
                                     />
-                                    {formik.touched.name && formik.errors.name ? (
-                                        <FormFeedback type="invalid"><div>{formik.errors.name}</div></FormFeedback>
+                                    {formik.touched.firstName && formik.errors.firstName ? (
+                                        <FormFeedback type="invalid"><div>{formik.errors.firstName}</div></FormFeedback>
                                     ) : null}
                                 </div>
                             </Col>
@@ -259,13 +234,13 @@ const UpdateAdminForm = () => {
                                         Soyisim
                                     </Label>
                                     <Input type="text" className="form-control" id="surname"
-                                        placeholder="Soyadı" name='surname' value={formik.values.surname} onChange={formik.handleChange} onBlur={formik.handleBlur}
+                                        placeholder="Soyadı" name='surname' value={formik.values.lastName} onChange={formik.handleChange} onBlur={formik.handleBlur}
                                         invalid={
-                                            formik.touched.surname && formik.errors.name ? true : false
+                                            formik.touched.lastName && formik.errors.firstName ? true : false
                                         }
                                     />
-                                    {formik.touched.surname && formik.errors.surname ? (
-                                        <FormFeedback type="invalid"><div>{formik.errors.surname}</div></FormFeedback>
+                                    {formik.touched.lastName && formik.errors.lastName ? (
+                                        <FormFeedback type="invalid"><div>{formik.errors.lastName}</div></FormFeedback>
                                     ) : null}
                                 </div>
                             </Col>
@@ -275,7 +250,7 @@ const UpdateAdminForm = () => {
                                         Tc No
                                     </Label>
                                     <Input type="text" className="form-control disabled-input"
-                                        value={formik.values.tcNo}
+                                        value={formik.values.tc}
                                         disabled
                                     />
                                 </div>
@@ -336,111 +311,14 @@ const UpdateAdminForm = () => {
                                     </select>
                                 </div>
                             </Col>
-                            <Col lg={6}>
-                                <div className="mb-3">
-                                    <Label htmlFor="emailInput" className="form-label">
-                                        Rol
-                                    </Label>
-                                    <Input type="text" className="form-control disabled-input"
-                                        name='role'
-                                        value={formik.values.role}
-                                        disabled
-                                    />
-                                </div>
-                            </Col>
 
-                            <Col lg={4}>
-                                <div className="mb-3">
-                                    <Label htmlFor="city" className="form-label">
-                                        Şehir
-                                    </Label>
-                                    <select name="city" id="city" className='form-control' value={formik.values.city} onChange={(event) => {
-                                        if (event.target.value !== "") {
-                                            setRegion(cityList.find(item => item.state == event.target.value)?.region)
-                                            formik.setFieldValue("region", "")
-                                            formik.handleChange(event)
-                                        }
-                                        else {
-                                            formik.handleChange(event)
-                                            formik.setFieldValue("region", "")
-                                        }
-                                    }} >
-                                        <option value="">
-                                            Seçim
-                                        </option>
-                                        {
-                                            cityList.map((item, index) => {
-                                                return (
-                                                    <option key={`${index}`} value={item.state}  >
-                                                        {item.state}
-                                                    </option>
-                                                )
-                                            })
-                                        }
-                                    </select>
-                                </div>
-                            </Col>
-                            <Col lg={4}>
-                                <div className="mb-3">
-                                    <Label htmlFor="region" className="form-label">
-                                        İlçe
-                                    </Label>
-                                    <select name="region" id="region" onChange={formik.handleChange} className='form-control' value={formik.values.region} onBlur={formik.handleBlur}  >
-                                        <option value="">
-                                            Seçim
-                                        </option>
-                                        {
-                                            region.map((item, index) => {
-                                                return (
-                                                    <option key={`${index}`} value={item}>
-                                                        {item}
-                                                    </option>
-                                                )
-                                            })
-                                        }
-                                    </select>
-                                </div>
-                            </Col>
-                            <Col lg={4}>
-                                <div className="mb-3">
-                                    <Label htmlFor="region" className={`form-label`}  >
-                                        Posta Kodu
-                                    </Label>
-                                    <Input type="number" className={`form-control ${postalCodeDisableControl ? "disabled-input" : ""}  `}
-                                        name='postalCode'
-                                        disabled={postalCodeDisableControl}
-                                        value={formik.values.postalCode}
-                                        onChange={formik.handleChange}
-                                    />
-                                </div>
-                            </Col>
-                            <Col lg={12}>
-                                <div className="mb-3">
-                                    <Label htmlFor="emailInput" className="form-label">
-                                        İzinler
-                                    </Label>
-                                    <Select
-                                        isMulti
-                                        options={permissionOptions}
-                                        value={formik.values.permission}
-                                        className={`basic-multi-select ${formik.touched.permission && formik.errors.permission ? 'is-invalid' : ''}`}
-                                        classNamePrefix="select"
-                                        onChange={(e) => {
-                                            formik.setFieldValue("permission", e)
-                                        }} onBlur={formik.handleBlur}
-                                    />
-                                    {formik.touched.permission && formik.errors.permission ? (
-                                        <FormFeedback type="invalid"><div>{formik.errors.permission}</div></FormFeedback>
-                                    ) : null}
-                                </div>
-                            </Col>
                             <Col lg={12}>
                                 <div className="hstack gap-2 justify-content-end">
                                     <button type="submit"
                                         className="btn btn-primary">
                                         Güncelle
                                     </button>
-                                   
+
                                 </div>
                             </Col>
 
@@ -457,3 +335,5 @@ const UpdateAdminForm = () => {
 }
 
 export default UpdateAdminForm
+
+

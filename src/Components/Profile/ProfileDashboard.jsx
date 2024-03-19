@@ -17,7 +17,7 @@ const ProfileDashboard = () => {
   const tabChange = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
   };
-
+  console.log("state => ",state)
   const getUserProfileData = async () => {
     try {
       console.log("statAE= ",state)

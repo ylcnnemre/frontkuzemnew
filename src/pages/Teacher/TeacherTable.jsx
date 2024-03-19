@@ -1,18 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardBody, CardHeader, Col, Container, Row, Input, Button } from "reactstrap";
 import DataTable from "react-data-table-component";
 import PageLoader from "../../Components/Common/PageLoader";
 import { GetTeacherListApi, getTeacherListApi } from "../../api/Teacher";
 import { MdModeEdit } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { getUserListApi } from "../../api/UserApi";
 
 
 
 const Index = () => {
     const [searchTerm, setSearchTerm] = useState("");
-    const { data, isLoading, revalidate } = GetTeacherListApi("teacher")
     const navigate = useNavigate()
-    console.log("data =>", data)
+    const [teacherList, setTeacherList] = useState([])
     /* const updateCellStatu = async (param) => {
         try {
             const response = await patchOrganizationsId(
@@ -25,14 +25,31 @@ const Index = () => {
         }
     }; */
 
+    const getTeacherList = async () => {
+        try {
+            const response = await getUserListApi({
+                page: 0,
+                pageSize: 10,
+                roleId: 2
+            })
+            setTeacherList(response.data.items)
+        }
+        catch (err) {
+
+        }
+    }
+
+    useEffect(() => {
+        getTeacherList()
+    }, [])
     const columns = [
         {
             name: "Adı",
-            selector: (row) => <span> {row?.name} </span>,
+            selector: (row) => <span> {row?.firstName} </span>,
         },
         {
             name: "Soyadı",
-            selector: (row) => <span> {row?.surname} </span>,
+            selector: (row) => <span> {row?.lastName} </span>,
         },
         {
             name: "Email",
@@ -48,22 +65,14 @@ const Index = () => {
             ),
         },
         {
-            name: "Branş",
-            selector: (row) => (
-                <span>
-                    {row.branch.name}
-                </span>
-            ),
-        },
-        {
             name: "Düzenle",
             selector: (row) => {
-                console.log("row =>",row)
+                console.log("row =>", row)
                 return (
 
                     <div className="d-flex gap-2">
-                        <Button color="warning" onClick={()=>{
-                            navigate(`/panel/egitmen/duzenle/${row._id}`)
+                        <Button color="warning" onClick={() => {
+                            navigate(`/panel/egitmen/duzenle/${row.id}`)
                         }} >
                             <MdModeEdit />
                         </Button>
@@ -74,9 +83,9 @@ const Index = () => {
         },
     ];
 
-    const filteredData = data?.filter((item) => {
+    const filteredData =teacherList?.filter((item) => {
         const lowercaseSearchTerm = searchTerm.toLowerCase();
-        return item?.name.toLowerCase().includes(lowercaseSearchTerm);
+        return item?.firstName.toLowerCase().includes(lowercaseSearchTerm);
     });
 
     return (
@@ -99,7 +108,6 @@ const Index = () => {
                     />
                 </Col>
             </Row>
-
             <DataTable
                 data={filteredData}
                 columns={columns}
@@ -116,12 +124,6 @@ const Index = () => {
                     rangeSeparatorText: "-",
                 }}
             />
-
-            {isLoading && (
-                <>
-                    <PageLoader />
-                </>
-            )}
         </React.Fragment>
     );
 };

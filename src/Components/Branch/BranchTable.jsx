@@ -139,9 +139,10 @@ const BranchTable = () => {
                 }
             }
             catch (err) {
-                toast.error(err.response.data.message, {
+                toast.error(err.response.data.Detail, {
                     autoClose: 1500
                 })
+                resetForm()
             }
 
         }

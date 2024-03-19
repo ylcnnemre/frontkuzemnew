@@ -16,44 +16,39 @@ const CreateAdminForm = () => {
     const [state, dispatch] = useContext(UserContext)
     const formik = useFormik({
         initialValues: {
-            name: "",
-            surname: "",
-            tcNo: "",
+            firstName: "",
+            lastName: "",
+            tc: "",
             email: "",
             phone: "",
             birthDate: "",
             gender: "erkek",
+            address: ""
         },
         validationSchema: yup.object({
             email: yup.string().email().required(),
-            name: yup.string().required(),
-            surname: yup.string().required(),
+            firstName: yup.string().required(),
+            lastName: yup.string().required(),
             phone: yup.string()
-                .matches(/^(\d{10})$/, "Geçerli bir Türkiye telefon numarası girin") // Türkiye telefon numarası formatı (Başında 0 ve 10 rakam)
+                .matches(/^(\d{11})$/, "Geçerli bir Türkiye telefon numarası girin") // Türkiye telefon numarası formatı (Başında 0 ve 10 rakam)
                 .required("Telefon numarası boş bırakılamaz"),
-            tcNo: yup
+            tc: yup
                 .string()
                 .length(11, "T.C. Kimlik Numarası 11 haneli olmalıdır.")
                 .matches(/^[0-9]+$/, "T.C. Kimlik Numarası sadece rakamlardan oluşmalıdır.")
                 .required("T.C. Kimlik Numarası boş bırakılamaz."),
             birthDate: yup.date().max(eighteenYearsAgo, 'You must be at least 18 years old.').min(eightyYearsAgo, 'You must be at most 80 years old.').required("Doğum Tarihi Seçiniz"),
-
+            address: yup.string().required()
         }),
         onSubmit: async (value, { resetForm }) => {
             try {
-                const { gender, tcNo, birthDate, permission, ...rest } = value
-                console.log("valuee ==>", value)
-                const requestBody = {
-                    ...rest,
-                    tcNo: `${tcNo}`,
-                    gender: gender,
-                    birthDate: new Date(birthDate).toISOString().split('T')[0],
-                    role: "admin",
-                    permission: permission.map(item => item.value),
-                    userId: state._id
-                }
-                console.log("reqq ==>", requestBody)
-                const response = await createUserApi(requestBody)
+                const { gender, tcNo, birthDate, ...rest } = value
+                const response = await createUserApi({
+                    ...value,
+                    RoleId: 2,
+                    adress: value.address,
+                    birthDate: new Date(birthDate).toUTCString()
+                })
                 console.log("response ==>", response)
                 toast.success("Yönetici kayıt edildi", {
                     autoClose: 1000
@@ -61,8 +56,8 @@ const CreateAdminForm = () => {
                 resetForm()
             }
             catch (err) {
-                console.log("err =>", err)
-                toast.error(err.response.data.message, {
+                console.log("err =>", err.response)
+                toast.error(err.response.data.Detail, {
                     autoClose: 1500
                 })
             }
@@ -70,59 +65,7 @@ const CreateAdminForm = () => {
         }
     })
 
-    const permissionOptions = useMemo(() => {
-        return [
-            {
-                label: "Öğrenci Düzenle",
-                value: Permission.STUDENT_EDIT,
-            },
-            {
-                label: "Öğrenci Silme",
-                value: Permission.STUDENT_DELETE
-            },
-            {
-                label: "Öğrenci Ekle",
-                value: Permission.STUDENT_ADD
-            },
-            {
-                label: "Eğitmen Düzenleme",
-                value: Permission.TEACHER_EDIT
-            },
-            {
-                label: "Eğitmen Silme",
-                value: Permission.TEACHER_DELETE
-            },
-            {
-                label: "Eğitmen Ekle",
-                value: Permission.TEACHER_ADD
-            },
-            {
-                label: "Kurs Düzenle",
-                value: Permission.COURSE_EDIT
-            },
-            {
-                label: "Kurs Sil",
-                value: Permission.COURSE_DELETE
-            },
-            {
-                label: "Kurs Ekle",
-                value: Permission.COURSE_ADD
-            },
-            {
-                label: "Dönem Ekle",
-                value: Permission.SEMESTER_ADD
-            },
-            {
-                label: "Dönem Düzenle",
-                value: Permission.SEMESTER_EDIT,
-            },
-            {
-                label: "Dönem Sil",
-                value: Permission.SEMESTER_DELETE
-            }
-        ]
 
-    }, [])
     return (
         <>
             <div className='' >
@@ -133,15 +76,15 @@ const CreateAdminForm = () => {
                                 <Label htmlFor="firstnameInput" className="form-label">
                                     İsim
                                 </Label>
-                                <Input type="text" className="form-control" id="name" name='name'
+                                <Input type="text" className="form-control" id="firstName" name='firstName'
                                     placeholder='isim'
-                                    value={formik.values.name} onChange={formik.handleChange} onBlur={formik.handleBlur}
+                                    value={formik.values.firstName} onChange={formik.handleChange} onBlur={formik.handleBlur}
                                     invalid={
-                                        formik.touched.name && formik.errors.name ? true : false
+                                        formik.touched.firstName && formik.errors.firstName ? true : false
                                     }
                                 />
-                                {formik.touched.name && formik.errors.name ? (
-                                    <FormFeedback type="invalid"><div>{formik.errors.name}</div></FormFeedback>
+                                {formik.touched.firstName && formik.errors.firstName ? (
+                                    <FormFeedback type="invalid"><div>{formik.errors.firstName}</div></FormFeedback>
                                 ) : null}
                             </div>
                         </Col>
@@ -150,14 +93,14 @@ const CreateAdminForm = () => {
                                 <Label htmlFor="lastnameInput" className="form-label">
                                     Soyisim
                                 </Label>
-                                <Input type="text" className="form-control" id="surname"
-                                    placeholder="Soyisim" name='surname' value={formik.values.surname} onChange={formik.handleChange} onBlur={formik.handleBlur}
+                                <Input type="text" className="form-control" id="lastName"
+                                    placeholder="Soyisim" name='lastName' value={formik.values.lastName} onChange={formik.handleChange} onBlur={formik.handleBlur}
                                     invalid={
-                                        formik.touched.surname && formik.errors.name ? true : false
+                                        formik.touched.lastName && formik.errors.firstName ? true : false
                                     }
                                 />
-                                {formik.touched.surname && formik.errors.surname ? (
-                                    <FormFeedback type="invalid"><div>{formik.errors.surname}</div></FormFeedback>
+                                {formik.touched.lastName && formik.errors.lastName ? (
+                                    <FormFeedback type="invalid"><div>{formik.errors.lastName}</div></FormFeedback>
                                 ) : null}
                             </div>
                         </Col>
@@ -168,16 +111,16 @@ const CreateAdminForm = () => {
                                 </Label>
                                 <Input type="text" className="form-control "
                                     placeholder='Tc No'
-                                    name='tcNo'
-                                    value={formik.values.tcNo}
+                                    name='tc'
+                                    value={formik.values.tc}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     invalid={
-                                        formik.touched.tcNo && formik.errors.tcNo ? true : false
+                                        formik.touched.tc && formik.errors.tc ? true : false
                                     }
                                 />
-                                {formik.touched.tcNo && formik.errors.tcNo ? (
-                                    <FormFeedback type="invalid"><div>{formik.errors.tcNo}</div></FormFeedback>
+                                {formik.touched.tc && formik.errors.tc ? (
+                                    <FormFeedback type="invalid"><div>{formik.errors.tc}</div></FormFeedback>
                                 ) : null}
                             </div>
                         </Col>
@@ -257,7 +200,27 @@ const CreateAdminForm = () => {
                                 </select>
                             </div>
                         </Col>
-
+                        <Col lg={12}>
+                            <div className="mb-3">
+                                <Label htmlFor="phonenumberInput" className="form-label">
+                                    Adres
+                                </Label>
+                                <Input type="text" className="form-control"
+                                    placeholder='adres'
+                                    onChange={formik.handleChange}
+                                    id="address"
+                                    onBlur={formik.handleBlur}
+                                    name='address'
+                                    invalid={
+                                        formik.touched.address && formik.errors.address ? true : false
+                                    }
+                                    value={formik.values.address}
+                                />
+                                {formik.touched.address && formik.errors.address ? (
+                                    <FormFeedback type="invalid"><div>{formik.errors.address}</div></FormFeedback>
+                                ) : null}
+                            </div>
+                        </Col>
                         <Col lg={12}>
                             <div className="hstack gap-2 justify-content-end">
                                 <button type="submit"

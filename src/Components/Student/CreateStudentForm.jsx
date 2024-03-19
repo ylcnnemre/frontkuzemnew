@@ -9,16 +9,7 @@ const today = new Date();
 const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
 const eightyYearsAgo = new Date(today.getFullYear() - 80, today.getMonth(), today.getDate());
 
-const testv = {
-    "firstName": "string",
-    "lastName": "string",
-    "email": "string",
-    "tc": "string",
-    "gender": "string",
-    "adress": "string",
-    "phone": "string",
-    "birthDate": "2024-03-17T10:07:16.934Z"
-}
+
 const CreateStudentForm = () => {
     const formik = useFormik({
         initialValues: {
@@ -52,23 +43,17 @@ const CreateStudentForm = () => {
                 console.log("valuee ==>", value)
                 const response = await createUserApi({
                     ...rest,
+                    RoleId : 4,
                     birthDate : new Date(birthDate).toUTCString()
                 })
-                console.log("resp ?=>",response.data)
-                await UserOperationClaimApi({
-                    id : response.data.data.userOperationClaimId,
-                    userId : response.data.data.userId,
-                    operationClaimId : 3
-                })
-                console.log("response ==>", response)
                 toast.success("Öğrenci kayıt edildi", {
                     autoClose: 1000
                 })
-               /*  resetForm() */
+                resetForm()
             }
             catch (err) {
-                console.log("err =>", err)
-                toast.error(err.message, {
+                console.log("err =>", err.response.data)
+                toast.error(err.response.data.Detail, {
                     autoClose: 1500
                 })
             }

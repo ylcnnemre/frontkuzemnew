@@ -5,6 +5,7 @@ import MyCourseTable from './MyCourseTable'
 import { PropagateLoader } from 'react-spinners'
 import { getUserByIdApi } from '../../../api/UserApi'
 import { toast } from 'react-toastify'
+import { GetAllForRegisteredStudentAndTeacher } from '../../../api/Course'
 
 const MyCourseDashboard = () => {
     const [activeTab, setActiveTab] = useState(1)
@@ -13,10 +14,11 @@ const MyCourseDashboard = () => {
 
     const getUserCourse = async () => {
         try {
-
-            const response = await getUserByIdApi(state._id)
-
-            setUserData(response.data)
+            const response = await GetAllForRegisteredStudentAndTeacher({
+                page: 0,
+                pageSize: 5
+            })
+            setUserData(response.data.items)
         }
         catch (err) {
             toast.error(err.message, {

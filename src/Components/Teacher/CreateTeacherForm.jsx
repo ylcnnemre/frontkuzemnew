@@ -20,21 +20,21 @@ const CreateTeacherForm = () => {
             birthDate: "",
             email: "",
             gender: "erkek",
-            name: "",
+            firstName: "",
             phone: "",
-            surname: "",
-            tcNo: "",
+            lastName: "",
+            tc: "",
             branch: ""
         },
         validationSchema: yup.object({
             email: yup.string().email().required(),
-            name: yup.string().required(),
-            surname: yup.string().required(),
+            firstName: yup.string().required(),
+            lastName: yup.string().required(),
             phone: yup.string()
-                .matches(/^(\d{10})$/, "Geçerli bir Türkiye telefon numarası girin") // Türkiye telefon numarası formatı (Başında 0 ve 10 rakam)
+                .matches(/^(\d{11})$/, "Geçerli bir Türkiye telefon numarası girin") // Türkiye telefon numarası formatı (Başında 0 ve 10 rakam)
                 .required("Telefon numarası boş bırakılamaz"),
-            branch: yup.string().required("Branş seçimi zorunludur"),
-            tcNo: yup
+            /* branch: yup.string().required("Branş seçimi zorunludur"), */
+            tc: yup
                 .string()
                 .length(11, "T.C. Kimlik Numarası 11 haneli olmalıdır.")
                 .matches(/^[0-9]+$/, "T.C. Kimlik Numarası sadece rakamlardan oluşmalıdır.")
@@ -44,17 +44,16 @@ const CreateTeacherForm = () => {
         }),
         onSubmit: async (value, { resetForm }) => {
             try {
-                const { gender, ...rest } = value
+                const { birthDate, ...rest } = value
                 await createUserApi({
                     ...rest,
-                    gender: gender,
-                    role: "teacher",
-                    userId: state._id
+                    RoleId: 2,
+                    birthDate: new Date(birthDate).toUTCString()
                 })
                 toast.success("Öğretmen kayıt edildi", {
                     autoClose: 1500
                 })
-                resetForm()
+                /* resetForm() */
             }
             catch (err) {
                 console.log("err =>", err)
@@ -75,15 +74,15 @@ const CreateTeacherForm = () => {
                             <Label htmlFor="firstnameInput" className="form-label">
                                 İsim
                             </Label>
-                            <Input type="text" className="form-control" id="name" name='name'
+                            <Input type="text" className="form-control" id="firstName" name='firstName'
                                 placeholder='isim'
-                                value={formik.values.name} onChange={formik.handleChange} onBlur={formik.handleBlur}
+                                value={formik.values.firstName} onChange={formik.handleChange} onBlur={formik.handleBlur}
                                 invalid={
-                                    formik.touched.name && formik.errors.name ? true : false
+                                    formik.touched.firstName && formik.errors.firstName ? true : false
                                 }
                             />
-                            {formik.touched.name && formik.errors.name ? (
-                                <FormFeedback type="invalid"><div>{formik.errors.name}</div></FormFeedback>
+                            {formik.touched.firstName && formik.errors.firstName ? (
+                                <FormFeedback type="invalid"><div>{formik.errors.firstName}</div></FormFeedback>
                             ) : null}
                         </div>
                     </Col>
@@ -92,14 +91,14 @@ const CreateTeacherForm = () => {
                             <Label htmlFor="lastnameInput" className="form-label">
                                 Soyisim
                             </Label>
-                            <Input type="text" className="form-control" id="surname"
-                                placeholder="Soyisim" name='surname' value={formik.values.surname} onChange={formik.handleChange} onBlur={formik.handleBlur}
+                            <Input type="text" className="form-control" id="lastName"
+                                placeholder="Soyisim" name='lastName' value={formik.values.lastName} onChange={formik.handleChange} onBlur={formik.handleBlur}
                                 invalid={
-                                    formik.touched.surname && formik.errors.name ? true : false
+                                    formik.touched.lastName && formik.errors.firstName ? true : false
                                 }
                             />
-                            {formik.touched.surname && formik.errors.surname ? (
-                                <FormFeedback type="invalid"><div>{formik.errors.surname}</div></FormFeedback>
+                            {formik.touched.lastName && formik.errors.lastName ? (
+                                <FormFeedback type="invalid"><div>{formik.errors.lastName}</div></FormFeedback>
                             ) : null}
                         </div>
                     </Col>
@@ -110,16 +109,16 @@ const CreateTeacherForm = () => {
                             </Label>
                             <Input type="text" className="form-control "
                                 placeholder='Tc No'
-                                name='tcNo'
-                                value={formik.values.tcNo}
+                                name='tc'
+                                value={formik.values.tc}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 invalid={
-                                    formik.touched.tcNo && formik.errors.tcNo ? true : false
+                                    formik.touched.tc && formik.errors.tc ? true : false
                                 }
                             />
-                            {formik.touched.tcNo && formik.errors.tcNo ? (
-                                <FormFeedback type="invalid"><div>{formik.errors.tcNo}</div></FormFeedback>
+                            {formik.touched.tc && formik.errors.tc ? (
+                                <FormFeedback type="invalid"><div>{formik.errors.tc}</div></FormFeedback>
                             ) : null}
                         </div>
                     </Col>
@@ -199,7 +198,7 @@ const CreateTeacherForm = () => {
                             </select>
                         </div>
                     </Col>
-                    <Col lg={6}>
+                    {/*   <Col lg={6}>
                         <div className="mb-3">
                             <Label htmlFor="emailInput" className="form-label">
                                 Branş
@@ -222,7 +221,7 @@ const CreateTeacherForm = () => {
                                 <FormFeedback type="invalid"><div>{formik.errors.branch}</div></FormFeedback>
                             ) : null}
                         </div>
-                    </Col>
+                    </Col> */}
 
                     <Col lg={12}>
                         <div className="hstack gap-2 justify-content-end">

@@ -1,26 +1,29 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { getStudentListApi } from '../../api/UserApi'
+import { getDynamicUserSearchApi, getUserListApi } from '../../api/UserApi'
 import { toast } from 'react-toastify'
 import { MdModeEdit } from 'react-icons/md'
 import { BsTrash } from 'react-icons/bs'
 import { Button, Card, Col, FormFeedback, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
 import DataTable from 'react-data-table-component'
 import { useNavigate } from 'react-router-dom'
+import { PropagateLoader } from 'react-spinners'
 
 const StudentTable = () => {
   const [studentList, setStudentList] = useState([])
+  const [filterType, setFilterType] = useState("firstName")
+  const [totalCount, setTotalCount] = useState(0)
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState("");
-  const getUserDataList = async () => {
+  const getUserDataList = async (page) => {
     try {
-      const response = await getStudentListApi({
-        page: 0,
-        pageSize: 10
+      const response = await getUserListApi({
+        page: page,
+        pageSize: 10,
+        roleId: 3
       })
-      console.log("resp => ", response)
-      const data = response.data.items.filter(el => el.claimName == "ogrenci")
-      console.log("data =>", data)
-      setStudentList(response.data.items.filter(el => el.claimName == "ogrenci"))
+      console.log("resp=> ", response)
+      setStudentList(response.data.items)
+      setTotalCount(response.data.count)
     }
     catch (err) {
       toast.error(err.response.data.message, {
@@ -30,7 +33,7 @@ const StudentTable = () => {
   }
 
   useEffect(() => {
-    getUserDataList()
+    getUserDataList(0)
   }, [])
 
   const columns = [
@@ -53,7 +56,6 @@ const StudentTable = () => {
     {
       name: "Düzenle",
       selector: (row) => {
-        console.log("row =>", row)
         return (
 
           <div className="d-flex gap-2">
@@ -62,7 +64,7 @@ const StudentTable = () => {
             }}  >
               <MdModeEdit />
             </Button>
-    
+
           </div>
 
         )
@@ -71,41 +73,114 @@ const StudentTable = () => {
   ];
 
 
-  const filteredData = useMemo(() => {
-    if (studentList.length !== 0) {
-      return studentList?.filter((item) => {
-        const lowercaseSearchTerm = searchTerm?.toLowerCase();
-        return item?.firstName?.toLowerCase()?.includes(lowercaseSearchTerm);
-      })
+  const dynamicSearch = async (e) => {
+    try {
+      if (e !== "") {
+        const body = {
+          "sort": [
+            {
+              "field": "firstname",
+              "dir": "asc"
+            }
+          ],
+          "filter": {
+            "field": filterType,
+            "operator": "contains",
+            "value": e,
+          },
+          "roleId": 4
+        }
+
+        const response = await getDynamicUserSearchApi(body, {
+          page: 0,
+          pageSize: 10
+        }
+        )
+        const selected = response.data.items
+        setStudentList(selected)
+        setTotalCount(selected.length)
+      }
+      else{
+        getUserDataList(0)
+      }
     }
-    return []
-  }, [studentList,searchTerm]);
+    catch (err) {
+
+    }
+  }
+
+
+
+  if (false) {
+    return (
+      <div style={{ width: "100%", textAlign: "center", padding: "50px 0" }} >
+        <PropagateLoader />
+      </div>
+    )
+  }
+
+
 
   return (
     <>
       <Row className="mb-2">
         <Col lg={2}>
-          <Button color="primary" onClick={() => {
-            navigate("/panel/ogrenci/ekle")
-          }}>
-            Öğrenci Ekle
-          </Button>
+          <div className="mb-3">
+            <select className='form-control' onChange={(e) => {
+              setFilterType(e.target.value)
+            }} >
+              <option value="firstName">
+                İsime göre ara
+              </option>
+              <option value="lastName">
+                Soyisime göre ara
+              </option>
+              <option value="email">
+                Emaile göre ara
+              </option>
+              <option value="phone">
+                Telefona göre ara
+              </option>
+            </select>
+          </div>
         </Col>
         <Col lg={2}>
           <Input
             width={"%50"}
             type="text"
             placeholder="Arama yap..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              dynamicSearch(e.target.value)
+            }}
           />
         </Col>
-      </Row>
+        <Col lg={8}>
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <Button color="primary" onClick={() => {
+              navigate("/panel/ogrenci/ekle")
+            }}>
+              Öğrenci Ekle
+            </Button>
+          </div>
+        </Col>
 
+      </Row>
+      {/* {
+        true && (
+          <div style={{ width: "100%", textAlign: "center", padding: "50px 0" }} >
+            <PropagateLoader />
+          </div>
+        )
+      } */}
       <DataTable
-        data={filteredData}
+        data={studentList}
         columns={columns}
         pagination
+        paginationTotalRows={totalCount}
+        paginationServer
+        onChangePage={(e) => {
+          getUserDataList(e - 1)
+        }}
         noDataComponent={
           <Card className="w-100 p-5">
             <center>
@@ -116,6 +191,7 @@ const StudentTable = () => {
         paginationComponentOptions={{
           rowsPerPageText: "Satır Sayısı",
           rangeSeparatorText: "-",
+          noRowsPerPage: true
         }}
       />
     </>
