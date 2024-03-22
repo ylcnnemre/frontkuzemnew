@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useContext } from 'react';
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { Collapse } from 'reactstrap';
@@ -8,13 +8,13 @@ import navdata from "../LayoutMenuData";
 import { withTranslation } from "react-i18next";
 import withRouter from "../../Components/Common/withRouter";
 import { useSelector } from "react-redux";
+import { UserContext } from '../../context/user';
 
 const VerticalLayout = (props) => {
 
-
-
     const navData = navdata().props.children;
     const path = props.router.location.pathname;
+    const [context, dispatch] = useContext(UserContext)
 
     /*
  layout settings
@@ -134,6 +134,13 @@ const VerticalLayout = (props) => {
         });
     };
 
+
+    const rolePermissionControl = (roleList) => {
+        let formatRole = context.role.replace(/\s+/g, '');
+        return roleList.includes(formatRole)
+    }
+
+
     return (
         <React.Fragment>
             {/* menu Items */}
@@ -166,7 +173,7 @@ const VerticalLayout = (props) => {
                                                 {/* subItms  */}
                                                 {item.subItems && ((item.subItems || []).map((subItem, key) => (
                                                     <React.Fragment key={key}>
-                                                        {!subItem.isChildItem ? (
+                                                        {!subItem.isChildItem && rolePermissionControl(subItem.role) ? (
                                                             <li className="nav-item">
                                                                 <Link
                                                                     to={subItem.link ? subItem.link : "/#"}
@@ -178,55 +185,7 @@ const VerticalLayout = (props) => {
                                                                         : null}
                                                                 </Link>
                                                             </li>
-                                                        ) : (
-                                                            <li className="nav-item">
-                                                                <Link
-                                                                    onClick={subItem.click}
-                                                                    className="nav-link"
-                                                                    to="/#"
-                                                                    data-bs-toggle="collapse"
-                                                                >
-                                                                    {props.t(subItem.label)}
-                                                                    {subItem.badgeName ?
-                                                                        <span className={"badge badge-pill bg-" + subItem.badgeColor} data-key="t-new">{subItem.badgeName}</span>
-                                                                        : null}
-                                                                </Link>
-                                                                <Collapse className="menu-dropdown" isOpen={subItem.stateVariables} id="sidebarEcommerce">
-                                                                    <ul className="nav nav-sm flex-column">
-                                                                        {/* child subItms  */}
-                                                                        {subItem.childItems && (
-                                                                            (subItem.childItems || []).map((childItem, key) => (
-                                                                                <React.Fragment key={key}>
-                                                                                    {!childItem.childItems ?
-                                                                                        <li className="nav-item">
-                                                                                            <Link
-                                                                                                to={childItem.link ? childItem.link : "/#"}
-                                                                                                className="nav-link">
-                                                                                                {props.t(childItem.label)}
-                                                                                            </Link>
-                                                                                        </li>
-                                                                                        : <li className="nav-item">
-                                                                                            <Link to="/#" className="nav-link" onClick={childItem.click} data-bs-toggle="collapse">
-                                                                                                {props.t(childItem.label)}
-                                                                                            </Link>
-                                                                                            <Collapse className="menu-dropdown" isOpen={childItem.stateVariables} id="sidebaremailTemplates">
-                                                                                                <ul className="nav nav-sm flex-column">
-                                                                                                    {childItem.childItems.map((subChildItem, key) => (
-                                                                                                        <li className="nav-item" key={key}>
-                                                                                                            <Link to={subChildItem.link} className="nav-link" data-key="t-basic-action">{props.t(subChildItem.label)} </Link>
-                                                                                                        </li>
-                                                                                                    ))}
-                                                                                                </ul>
-                                                                                            </Collapse>
-                                                                                        </li>
-                                                                                    }
-                                                                                </React.Fragment>
-                                                                            ))
-                                                                        )}
-                                                                    </ul>
-                                                                </Collapse>
-                                                            </li>
-                                                        )}
+                                                        ) : null}
                                                     </React.Fragment>
                                                 ))
                                                 )}
@@ -234,7 +193,8 @@ const VerticalLayout = (props) => {
 
                                         </Collapse>
                                     </li>
-                                ) : (
+                                ) : rolePermissionControl(item.role) ? (
+
                                     <li className="nav-item">
                                         <Link
                                             className="nav-link menu-link"
@@ -245,7 +205,10 @@ const VerticalLayout = (props) => {
                                                 : null}
                                         </Link>
                                     </li>
-                                ))
+
+                                ) : null
+
+                                )
                             )
                         }
                     </React.Fragment>

@@ -28,28 +28,18 @@ const EditStudentInfoTab = () => {
                 if (key != "address") {
                     formik.setFieldValue(key, val)
                 }
-                else {
-                    const address = val
-                    formik.setFieldValue("city", address.city)
-                    formik.setFieldValue("postalCode", address.postalCode)
-                    if (address.city !== "") {
-                        setRegion(cityList.find(item => item.state == address.city)?.region)
-                        formik.setFieldValue("region", address.region)
-                    }
-                }
+
             })
-            const formatBirthDate = new Date(birthDate).toISOString().split('T')[0];
+            const formatBirthDate = new Date(birthDate).toUTCString()
             formik.setFieldValue('birthDate', formatBirthDate);
-            formik.setFieldValue("branch", branch?.name)
         }
         catch (err) {
-            toast.error(err.response.data.message)
+            toast.error(err.message)
         }
     }
 
     const formik = useFormik({
         initialValues: {
-            _id: "",
             birthDate: "",
             email: "",
             gender: "erkek",
@@ -57,21 +47,24 @@ const EditStudentInfoTab = () => {
             phone: "",
             lastName: "",
             tc: "",
+            adress: ""
         },
         validationSchema: yup.object({
             email: yup.string().email().required(),
             firstName: yup.string().required(),
             lastName: yup.string().required(),
             phone: yup.string(),
-            birthDate: yup.date().max(eighteenYearsAgo, 'You must be at least 18 years old.').min(eightyYearsAgo, 'You must be at most 80 years old.').required("Doğum Tarihi Seçiniz"),
+            adress: yup.string().required(),
+/*             birthDate: yup.date().max(eighteenYearsAgo, 'You must be at least 18 years old.').min(eightyYearsAgo, 'You must be at most 80 years old.') */
         }),
         onSubmit: async (value) => {
             try {
-                const { birthDate,...rest } = value
+                const { birthDate, ...rest } = value
                 console.log("vall =>", value)
                 let response = await updateUserApi({
                     ...rest,
-                    birthDate : new Date(birthDate).toUTCString()
+                    birthDate: new Date(birthDate).toUTCString(),
+                    branches : []
                 })
                 toast.success("güncelleme başarılı", {
                     autoClose: 1000
@@ -107,14 +100,12 @@ const EditStudentInfoTab = () => {
         apiRequest()
     }, [id])
 
-    const postalCodeDisableControl = useMemo(() => {
-        return formik.values.city == "" || formik.values.region == ""
-    }, [formik.values.city, formik.values.region])
+
 
 
     if (loading) {
         return (
-            <div style={{ display: "flex", justifyContent: "center", marginTop: "50px" }} >
+            <div style={{ display: "flex", justifyContent: "center", padding: "20px" }} >
                 <PropagateLoader color="#36d7b7" />
             </div>
         )
@@ -172,6 +163,7 @@ const EditStudentInfoTab = () => {
                             Doğum tarihi
                         </Label>
                         <Input
+                            disabled
                             name="birthDate"
                             type="date"
                             placeholde1r="Doğum Tarihi"
@@ -182,6 +174,9 @@ const EditStudentInfoTab = () => {
                                 formik.touched.birthDate && formik.errors.birthDate ? true : false
                             }
                         />
+                        {formik.touched.birthDate && formik.errors.birthDate ? (
+                            <FormFeedback type="invalid"><div>{formik.errors.birthDate}</div></FormFeedback>
+                        ) : null}
                     </div>
                 </Col>
                 <Col lg={4}>
@@ -222,7 +217,22 @@ const EditStudentInfoTab = () => {
                         </select>
                     </div>
                 </Col>
-
+                <Col lg={12}>
+                    <div className="mb-3">
+                        <Label htmlFor="firstnameInput" className="form-label">
+                            Adres
+                        </Label>
+                        <Input type="text" className="form-control" id="adress" name='adress'
+                            value={formik.values.adress} onChange={formik.handleChange} onBlur={formik.handleBlur}
+                            invalid={
+                                formik.touched.adress && formik.errors.adress ? true : false
+                            }
+                        />
+                        {formik.touched.adress && formik.errors.adress ? (
+                            <FormFeedback type="invalid"><div>{formik.errors.adress}</div></FormFeedback>
+                        ) : null}
+                    </div>
+                </Col>
                 <Col lg={12}>
                     <div className="hstack gap-2 justify-content-end">
                         <button type="submit"

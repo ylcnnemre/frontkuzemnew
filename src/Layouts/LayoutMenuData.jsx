@@ -34,7 +34,8 @@ const Navdata = () => {
             link: "/panel/anasayfa",
             click: function (e) {
                 e.preventDefault()
-            }
+            },
+            role: ["SüperAdmin", "Admin", "Öğrenci", "Öğretmen"]
         },
         {
             id: "Eğitmenler",
@@ -44,6 +45,7 @@ const Navdata = () => {
             click: function (e) {
                 e.preventDefault();
             },
+            role: ["SüperAdmin", "Admin"]
         },
         {
             id: "admin",
@@ -53,6 +55,7 @@ const Navdata = () => {
             click: function (e) {
                 e.preventDefault();
             },
+            role: ["SüperAdmin", "Admin"]
         },
 
         {
@@ -64,6 +67,7 @@ const Navdata = () => {
                 e.preventDefault();
                 setIscurrentState("Branslar");
             },
+            role: ["SüperAdmin", "Admin"]
         },
         {
             id: "dönemler",
@@ -73,6 +77,7 @@ const Navdata = () => {
             click: function (e) {
                 e.preventDefault();
             },
+            role: ["SüperAdmin", "Admin"]
         },
         {
             id: "kurslar",
@@ -93,13 +98,23 @@ const Navdata = () => {
                     icon: "ri-menu-line",
                     link: "/panel/kurslar",
                     parentId: "kurslar",
+                    role: ["SüperAdmin", "Admin", "Öğrenci"]
                 },
                 {
-                    id: "aldigimkurslar",
-                    label: "Aldığım Kurslar",
+                    id : "kurslarim",
+                    label : "Kurslarım",
+                    icon : "ri-menu-line",
+                    link : "/panel/kurslarim",
+                    parentId : "kurslar",
+                    role : ["Öğrenci"]
+                },
+                {
+                    id: "sorumlukurslar",
+                    label: "Sorumlu Kurslarım",
                     icon: "ri-line-chart-line",
-                    link: "/panel/kurslarim",
+                    link: "/panel/sorumlukurslar",
                     parentId: "kurslar",
+                    role: ["Öğretmen"]
                 },
             ],
         },
@@ -114,6 +129,7 @@ const Navdata = () => {
                 setIscurrentState("Appointments");
                 updateIconSidebar(e);
             },
+            role: ["SüperAdmin", "Admin"]
         }
     ];
 

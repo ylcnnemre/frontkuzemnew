@@ -1,20 +1,20 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap'
 import { UserContext } from '../../../context/user'
-import MyCourseTable from './MyCourseTable'
+import TeacherCourseTable from './TeacherCourseTable'
 import { PropagateLoader } from 'react-spinners'
 import { getUserByIdApi } from '../../../api/UserApi'
 import { toast } from 'react-toastify'
-import { GetAllForRegisteredStudentAndTeacher } from '../../../api/Course'
+import { GetAllForRegisteredTeacher } from '../../../api/Course'
+import TeacherOnlineCourseTab from './TeacherOnlineCourseTab'
 
-const MyCourseDashboard = () => {
+const TeacherCourseDashboard = () => {
     const [activeTab, setActiveTab] = useState(1)
-    const [state, dispatch] = useContext(UserContext)
     const [userData, setUserData] = useState()
-
+    const [meetinAlert, setMeetingAlert] = useState(false)
     const getUserCourse = async () => {
         try {
-            const response = await GetAllForRegisteredStudentAndTeacher({
+            const response = await GetAllForRegisteredTeacher({
                 page: 0,
                 pageSize: 5
             })
@@ -36,7 +36,9 @@ const MyCourseDashboard = () => {
 
 
     if (!userData) {
-        return <PropagateLoader />
+        return <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "30px" }} >
+            <PropagateLoader color='#9FD4CD' />
+        </div>
     }
 
 
@@ -50,7 +52,7 @@ const MyCourseDashboard = () => {
                 </NavItem>
                 <NavItem>
                     <NavLink className={`${activeTab == 2 && "active"}`} onClick={() => { setActiveTab(2) }} >
-                        Sınavlarım
+                        Canlı Yayın
                     </NavLink>
                 </NavItem>
                 <NavItem>
@@ -61,10 +63,10 @@ const MyCourseDashboard = () => {
             </Nav>
             <TabContent activeTab={activeTab} style={{ paddingTop: "20px" }}>
                 <TabPane tabId={1}  >
-                    <MyCourseTable userData={userData} />
+                    <TeacherCourseTable userData={userData} setMeetingAlert={setMeetingAlert} />
                 </TabPane>
                 <TabPane tabId={2} >
-                    asd
+                    <TeacherOnlineCourseTab meetingAlert={meetinAlert} />
                 </TabPane>
                 <TabPane tabId={3} >
                     sertifika
@@ -75,4 +77,4 @@ const MyCourseDashboard = () => {
     )
 }
 
-export default MyCourseDashboard
+export default TeacherCourseDashboard

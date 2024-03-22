@@ -1,22 +1,24 @@
 import { axiosInstance } from "./axiosInstance";
 
-const getAllCourseByStatusApi = () => axiosInstance.post(`/Courses/GetAll`, {
-    page: 0,
-    pageSize: 10
-})
+const getAllCourseByStatusApi = (data) => axiosInstance.post(`/Courses/GetAll`, data)
 
-const GetAllForRegisteredStudentAndTeacher = (data) => axiosInstance.post("/courses/GetAllForRegisteredStudentAndTeacher", data)
+const GetAllForRegisteredTeacher = (data) => axiosInstance.post("/courses/GetAllForRegisteredTeacher", data)
 
+const CourseAdminListGetAll = (data) => axiosInstance.post("/CourseAdministrators/GetAll", data)
+
+const createCourseApi = (data) => axiosInstance.post("/courses/add", data)
+
+const CourseRegisterStudentApi = (data) => axiosInstance.post("/courseRegisters/GetAllForStudent", data)
+
+const CourseMeetingsForStudentApi = (data, courseId) => axiosInstance.post(`/courseDates/getAllCalendarForCourse?courseId=${courseId}`, data)
+
+const getAllForRegistredUser = (data, courseId) => axiosInstance.post(`/OnlineCourseUrls/GetAllForRegistredUser?courseId=${courseId}`, data)
 
 const getDetailCourseApi = (id) => axiosInstance.get(`/course/${id}`)
 
 const updateCourseApi = (data) => axiosInstance.put("/course", data)
 
-const createCourseApi = (data) => axiosInstance.post("/course/create", data, {
-    headers: {
-        "Content-Type": "multipart/form-data"
-    }
-})
+const registerCourseApi = (data) => axiosInstance.post("/CourseRegisters/Add", data)
 
 const addCourseAdministrators = (data) => axiosInstance.post("/CourseAdministrators/Add", data)
 
@@ -27,6 +29,7 @@ const deleteCourseApi = (data) => axiosInstance.delete("/course/delete", {
 })
 
 const deleteCourseSendEmailApi = (id) => axiosInstance.post(`/course/${id}`)
+
 
 
 const deleteDocumentApi = (data) => axiosInstance.delete("/course/document", {
@@ -84,5 +87,10 @@ export {
     createAnnouncementApi,
     updateAnnouncementApi,
     addCourseAdministrators,
-    GetAllForRegisteredStudentAndTeacher
+    GetAllForRegisteredTeacher,
+    CourseAdminListGetAll,
+    registerCourseApi,
+    CourseRegisterStudentApi,
+    CourseMeetingsForStudentApi,
+    getAllForRegistredUser
 }

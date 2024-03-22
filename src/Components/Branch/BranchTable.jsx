@@ -67,12 +67,7 @@ const BranchTable = () => {
                     page : 0,
                     pageSize: 10
                 });
-                console.log("branches =>",branches)
-                const list=[]
-                for(let item=0;item<1;item++){
-                    list.push(branches.data.items[0])
-                }
-                console.log("list =>",list)
+                
                 setBranch(branches.data.items);
             } catch (err) {
                 console.error("Error fetching branches:", err);
@@ -102,13 +97,16 @@ const BranchTable = () => {
                         name: value.name,
                     })
                     console.log("resp =>",response)
-                    setBranch([...branch,{
+                   /*  setBranch([...branch,{
                         id : response.data.data.id,
                         name : value.name
-                    }])
+                    }]) */
                     toast.success("branş kayıt edildi", {
                         autoClose: 1000
                     })
+                    /* setBranch([...branch,{
+                        id : res
+                    }]) */
                     resetForm()
                     setModalShow({
                         type: "create",

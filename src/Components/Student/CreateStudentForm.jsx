@@ -43,7 +43,7 @@ const CreateStudentForm = () => {
                 console.log("valuee ==>", value)
                 const response = await createUserApi({
                     ...rest,
-                    RoleId : 4,
+                    RoleId : 3,
                     birthDate : new Date(birthDate).toUTCString()
                 })
                 toast.success("Öğrenci kayıt edildi", {

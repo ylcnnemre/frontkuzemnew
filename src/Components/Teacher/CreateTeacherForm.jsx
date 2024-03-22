@@ -3,33 +3,35 @@ import { useFormik } from 'formik'
 import * as yup from "yup"
 import { Col, FormFeedback, Input, Label, Row, Form } from 'reactstrap'
 import { toast } from 'react-toastify'
-import { GetAllBranch } from '../../api/Branch'
+import { GetAllBranch, getAllBranch } from '../../api/Branch'
 import { UserContext } from '../../context/user'
 import { createUserApi } from '../../api/UserApi'
-
+import { Select } from 'antd'
+import "./index.scss"
 const today = new Date();
 const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
 const eightyYearsAgo = new Date(today.getFullYear() - 80, today.getMonth(), today.getDate());
 
 const CreateTeacherForm = () => {
-    const { data, isLoading } = GetAllBranch()
     const [state, dispatch] = useContext(UserContext)
-    console.log("sta =>", state)
+    const [branches, setBranch] = useState([])
     const formik = useFormik({
         initialValues: {
             birthDate: "",
             email: "",
             gender: "erkek",
+            adress: "",
             firstName: "",
             phone: "",
             lastName: "",
             tc: "",
-            branch: ""
+            branch: []
         },
         validationSchema: yup.object({
             email: yup.string().email().required(),
             firstName: yup.string().required(),
             lastName: yup.string().required(),
+            adress: yup.string().required(),
             phone: yup.string()
                 .matches(/^(\d{11})$/, "Geçerli bir Türkiye telefon numarası girin") // Türkiye telefon numarası formatı (Başında 0 ve 10 rakam)
                 .required("Telefon numarası boş bırakılamaz"),
@@ -40,20 +42,26 @@ const CreateTeacherForm = () => {
                 .matches(/^[0-9]+$/, "T.C. Kimlik Numarası sadece rakamlardan oluşmalıdır.")
                 .required("T.C. Kimlik Numarası boş bırakılamaz."),
             birthDate: yup.date().max(eighteenYearsAgo, 'You must be at least 18 years old.').min(eightyYearsAgo, 'You must be at most 80 years old.').required("Doğum Tarihi Seçiniz"),
-
+            branch: yup.array().min(1, "En az bir adet seçmelisiniz")
         }),
         onSubmit: async (value, { resetForm }) => {
             try {
                 const { birthDate, ...rest } = value
+                console.log("vale => ", value)
                 await createUserApi({
                     ...rest,
                     RoleId: 2,
-                    birthDate: new Date(birthDate).toUTCString()
+                    birthDate: new Date(birthDate).toUTCString(),
+                    branches: value.branch.map(el => {
+                        return {
+                            branchId: el
+                        }
+                    })
                 })
                 toast.success("Öğretmen kayıt edildi", {
                     autoClose: 1500
                 })
-                /* resetForm() */
+                resetForm()
             }
             catch (err) {
                 console.log("err =>", err)
@@ -64,7 +72,25 @@ const CreateTeacherForm = () => {
 
         }
     })
-    console.log("formik ==>=", formik.errors)
+
+    const fetchBranches = async () => {
+        try {
+            const branches = await getAllBranch({
+                page: 0,
+                pageSize: 100
+            });
+            console.log("branch => ", branches.data)
+            setBranch(branches.data.items);
+        } catch (err) {
+            console.error("Error fetching branches:", err);
+        }
+    };
+
+
+    useEffect(() => {
+        fetchBranches()
+    }, [])
+
     return (
         <div className='' >
             <Form onSubmit={formik.handleSubmit}>
@@ -196,6 +222,48 @@ const CreateTeacherForm = () => {
                                     kadın
                                 </option>
                             </select>
+                        </div>
+                    </Col>
+                    <Col lg={6}>
+                        <div className="mb-3">
+                            <Label htmlFor="emailInput" className="form-label">
+                                Branş
+                            </Label>
+                            <Select
+                                mode='multiple'
+                                className='branch_select'
+                                allowClear
+                                style={{ width: "100%" }}
+                                options={branches.map(el => {
+                                    return {
+                                        value: el.id,
+                                        label: el.name
+                                    }
+                                })}
+                                onChange={(value) => {
+                                    formik.setFieldValue('branch', value); // Formik değerini güncelle
+                                }}
+                                onBlur={formik.handleBlur}
+                                value={formik.values.branch}
+                            />
+                            {formik.touched.branch && formik.errors.branch ? (
+                                <div className="invalid-feedback d-block">
+                                    {formik.errors.branch}
+                                </div>
+                            ) : null}
+                        </div>
+                    </Col>
+                    <Col lg={12}>
+                        <div className="mb-3">
+                            <Label htmlFor="emailInput" className="form-label">
+                                Adress
+                            </Label>
+                            <Input className='form-control' onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.adress} type='textarea' name='adress' style={{ resize: "none" }} />
+                            {formik.touched.adress && formik.errors.adress ? (
+                                <div className="invalid-feedback d-block">
+                                    {formik.errors.adress}
+                                </div>
+                            ) : null}
                         </div>
                     </Col>
                     {/*   <Col lg={6}>

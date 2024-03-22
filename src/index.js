@@ -10,6 +10,7 @@ import { Provider } from 'react-redux';
 import store from "./slices/index";
 import "./i18n"
 const root = ReactDOM.createRoot(document.getElementById('root'));
+Document.title="asd"
 root.render(
   <>
     <Provider store={store}>

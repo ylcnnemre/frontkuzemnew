@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import "./courseDetail.scss"
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useNavigate, useParams } from 'react-router-dom'
-import { getDetailCourseApi } from '../../api/Course'
+import { CourseAdminListGetAll, addCourseAdministrators, getAllCourseByStatusApi, getDetailCourseApi, registerCourseApi } from '../../api/Course'
 import { toast } from 'react-toastify'
-import { Button, Col, Row } from 'reactstrap'
+import { Button, Col, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap'
 import { IoTimeOutline } from "react-icons/io5";
 import { DetailInfoWidget } from './DetailInfoWidget'
 import { IoMdTime } from 'react-icons/io';
@@ -18,34 +18,43 @@ import { CircleLoader } from 'react-spinners'
 import Slider from 'react-slick';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Grid } from 'swiper/modules';
+import { BsGenderMale } from 'react-icons/bs';
+import { CiCalendarDate } from 'react-icons/ci';
+import { UserContext } from '../../context/user';
+import { getUserListApi } from '../../api/UserApi';
 
 const CourseDetailDashboard = () => {
     const [loading, setLoading] = useState(false)
     const { id } = useParams()
     const [courseDetailData, setCourseDetailData] = useState()
     const navigate = useNavigate()
-    const DetailCourseRequest = async () => {
+    const [TeacherList, setTeacherList] = useState([])
+    const [selectedTeacher, setSelectedTeacher] = useState()
+    const [selectTeacherModal, setSelectTeacherModal] = useState({
+        courseId: "",
+        show: false,
+        teacher: null
+    })
+    const [context, dispatch] = useContext(UserContext)
+    console.log("con => ", context)
+    const getCourseList = async () => {
         try {
             setLoading(true)
-
-            let response = await getDetailCourseApi(id)
-            console.log("response ==>", response.data)
-            setCourseDetailData(response.data)
+            const response = await getAllCourseByStatusApi({
+                page : 0,
+                pageSize : 100
+            })
+            setCourseDetailData(response.data.items.find(el => el.id == id))
         }
         catch (err) {
             toast.error(err.response.data.message, {
                 autoClose: 1500
             })
-            navigate("/panel/kurslar")
         }
         finally {
             setLoading(false)
         }
     }
-
-    const photoList = useMemo(() => {
-        return courseDetailData?.files.filter(el => el.type == "photo")
-    }, [courseDetailData?.files])
 
     const timeDetail = useMemo(() => {
         if (courseDetailData) {
@@ -56,8 +65,20 @@ const CourseDetailDashboard = () => {
         }
     }, [courseDetailData?.startDate, courseDetailData?.endDate])
 
+    const getTeacherList = async () => {
+        const response = await getUserListApi({
+            page: 0,
+            pageSize: 10,
+            roleId: 2
+        })
+        setTeacherList(response.data.items)
+    }
+
+
     useEffect(() => {
-        DetailCourseRequest()
+        /* DetailCourseRequest() */
+        getCourseList()
+        getTeacherList()
     }, [])
 
 
@@ -69,11 +90,17 @@ const CourseDetailDashboard = () => {
         slidesToScroll: 3
     };
 
+    const roleControl = useMemo(() => {
+        let formatRole = context.role.replace(/\s+/g, '');
+        return formatRole == "Admin" || formatRole == "SüperAdmin"
+    }, [context])
+
     if (loading) {
         return <div style={{ width: "100%", textAlign: "center", display: "flex", justifyContent: "center" }}>
             <CircleLoader color='green' />
         </div>
     }
+
 
 
 
@@ -83,105 +110,158 @@ const CourseDetailDashboard = () => {
                 <Col sm={12} >
                     <div className='course_detail_title_container'>
                         <h3 className='course_title'>
-                            {courseDetailData?.title}
+                            {courseDetailData?.name}
                         </h3>
                         <div>
-                            <Button className='me-4' >
-                                Kayıt ol
-                            </Button>
-                            <Button color='warning' onClick={() => {
-                                navigate(`/panel/kurs/duzenle/${id}`)
-                            }} >
-                                Düzenle
-                            </Button>
+                            {
+                                context.role === "Öğrenci" && (
+                                    <Button className='me-4' onClick={async () => {
+                                        try {
+                                            const response = await registerCourseApi({
+                                                courseId: id,
+                                                userId: context.userId
+                                            })
+                                            console.log("response => ", response)
+                                            toast.success("Kursa Kayıt oldunuz")
+                                        }
+                                        catch (err) {
+                                            console.log("err => ", err.response)
+                                            toast.error(err.response.data.Detail, {
+                                                autoClose: 1500
+                                            })
+                                        }
+                                    }}    >
+                                        Kayıt ol
+                                    </Button>
+                                )
+                            }
+
+                            {
+                                roleControl && (
+                                    <Button onClick={async () => {
+                                        try {
+
+                                            const response = await CourseAdminListGetAll({
+                                                page: 0,
+                                                pageSize: 10
+                                            })
+
+                                            const sorumluOgretmen = response.data.items.find(el => el.courseId == id)
+                                            console.log("sorumlu =>", sorumluOgretmen)
+                                            setSelectTeacherModal({
+                                                courseId: id,
+                                                show: true,
+                                                teacher: sorumluOgretmen ? sorumluOgretmen.user : ""
+                                            })
+                                        }
+                                        catch (err) {
+
+                                        }
+                                    }} >
+                                        Yetkilendir
+                                    </Button>
+                                )
+                            }
+                            {
+                                roleControl && (
+                                    <Button color='warning' style={{ marginLeft: "20px" }} onClick={() => {
+                                        navigate(`/panel/kurs/duzenle/${id}`)
+                                    }} >
+                                        Düzenle
+                                    </Button>
+                                )
+                            }
+
                         </div>
                     </div>
                 </Col>
                 <Col sm={4} >
-                    <DetailInfoWidget icon={<IoTimeOutline />} title='Başlangıç' value={timeDetail?.startDate ?? ""} />
+                    <DetailInfoWidget icon={<CiCalendarDate />} title='Kurs Başlangıç' value={timeDetail?.startDate ?? ""} />
                 </Col>
                 <Col sm={4} >
-                    <DetailInfoWidget icon={<IoMdTime />} title='Bitiş' value={timeDetail?.endDate ?? ""} />
+                    <DetailInfoWidget icon={<CiCalendarDate />} title='Kurs Bitişi' value={timeDetail?.endDate ?? ""} />
                 </Col>
                 <Col sm={4} >
-                    <DetailInfoWidget icon={<IoIosPeople />} title='Kontenjan' value={courseDetailData?.quota} />
+                    <DetailInfoWidget icon={<IoIosPeople />} title='Kontenjan' value={courseDetailData?.limit} />
                 </Col>
-                <Col sm={6} >
-                    <DetailInfoWidget icon={<VscSymbolField />} title='Branş' value={courseDetailData?.branch.name} />
+                <Col sm={4} >
+                    <DetailInfoWidget icon={<BsGenderMale />} title='Cinsiyet Şartı' value={courseDetailData?.genderType} />
                 </Col>
-                <Col sm={6} >
+                <Col sm={4} >
+                    <DetailInfoWidget icon={<IoTimeOutline />} title='Yaş Şartı' value={courseDetailData?.startYear} />
+                </Col>
+                <Col sm={4} >
+                    <DetailInfoWidget icon={<IoMdTime />} title='Yaş Şartı' value={courseDetailData?.endYear} />
+                </Col>
+                {/*     <Col sm={6} >
                     <DetailInfoWidget icon={<FaChalkboardTeacher />} title='Eğitmen' value={courseDetailData?.teacher ? `${courseDetailData?.teacher?.name} ${courseDetailData?.teacher?.surname}` : "Seçilmedi"} />
-                </Col>
+                </Col> */}
                 <Col sm={12} >
                     <DetailInfoWidget icon={<TbFileDescription />} title='Açıklama' value={courseDetailData?.description} />
                 </Col>
 
             </Row>
-            <Row className='mt-5 mb-4' >
-                <h5 className='course_photo_title'>
-                    Fotoğraflar
-                </h5>
-                <Col  >
-                    <Swiper slidesPerView={4} grid={{ rows: 1 }} spaceBetween={30} pagination={{ clickable: true }} modules={[Grid]} >
-                        {
-                            photoList?.map((el) => {
-                                return (
-                                    <SwiperSlide >
-                                        <div>
-                                            <img src={`${process.env.REACT_APP_BASEURL}${el.path}`} className="img-fluid  course_detail_photo_item " alt="" />
 
-                                        </div>
-                                    </SwiperSlide>
-                                )
+            <Modal isOpen={selectTeacherModal.show} >
+                <ModalHeader>
+                    Eğitmen Seç
+                </ModalHeader>
+                <ModalBody>
+                    <div className="mb-3">
+                        <Label htmlFor="emailInput" className="form-label">
+                            Eğitmen
+                        </Label>
+                        <select className='form-control' defaultValue={selectTeacherModal?.teacher?.id} onChange={(e) => {
+                            setSelectedTeacher(e.target.value)
+                        }}   >
+                            <option value=""   >
+                                Eğitmen Seçiniz
+                            </option>
+                            {
+                                TeacherList.map(el => {
+                                    return (
+                                        <option value={el.id}>
+                                            {el.firstName} {el.lastName}
+                                        </option>
+                                    )
+                                })
+                            }
+                        </select>
+                    </div>
+                </ModalBody>
+                <ModalFooter>
+                    <Button onClick={async () => {
+                        try {
+                            const response = await addCourseAdministrators({
+                                userId: selectedTeacher,
+                                courseId: selectTeacherModal.courseId
+                            })
+                            toast.success("eğitmen kayıt edildi", {
+                                autoClose: 1000
+                            })
+                            setSelectTeacherModal({
+                                courseId: "",
+                                show: false
                             })
                         }
-                    </Swiper>
-                    {/* <Slider {...settings}>
-                        {
-                            photoList?.map((el, index) => {
-                                return (
-                                    <>
-                                        <div className='slick_slide_item' key={`${index}`} >
-                                            <img src={`${process.env.REACT_APP_BASEURL}${el.path}`} className='img-fluid' alt="" />
-                                        </div>
-
-                                    </>
-                                )
+                        catch (err) {
+                            toast.error(err.response.data.Detail, {
+                                autoClose: 1000
                             })
                         }
-                    </Slider> */}
-                </Col>
-
-            </Row>
-            <Row>
-                <Col lg={12} >
-                    <h5 className='course_schedule_title' >
-                        Kurs Programı
-                    </h5>
-                </Col>
-                {
-                    courseDetailData?.schedules?.map((el, index) => {
-                        return (
-                            <Col lg={4} >
-                                <div className='schedule_card' key={`${index}`} >
-                                    <p className='schedule_card_day'>
-                                        Gün : <span style={{ color: "#FFCE02" }} >{el.day}</span>
-                                    </p>
-                                    <div className='schedule_card_time'  >
-                                        <p>
-                                            Başlangıç : <span style={{ color: "#FFCE02" }}>{el.startTime}</span>
-                                        </p>
-                                        <p>
-                                            Bitiş : <span style={{ color: "#FFCE02" }}>{el.endTime}</span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </Col>
-                        )
-                    })
-                }
-
-            </Row>
+                    }} >
+                        Kaydet
+                    </Button>
+                    <Button className='btn btn-danger' onClick={() => {
+                        setSelectTeacherModal({
+                            show: false,
+                            courseId: ""
+                        })
+                    }} >
+                        İptal
+                    </Button>
+                </ModalFooter>
+            </Modal>
         </div>
     )
 }

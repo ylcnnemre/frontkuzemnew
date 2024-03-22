@@ -20,7 +20,7 @@ import CourseDetailPage from "../pages/Course/CourseDetailPage";
 import CreateCoursePage from "../pages/Course/CreateCoursePage";
 import UpdateCourseForm from "../Components/Course/UpdateCourse/UpdateCourseForm";
 import CourseUpdatePage from "../pages/Course/CourseUpdatePage";
-import MyCoursePage from "../pages/Course/MyCoursePage";
+import TeacherCoursePage from "../pages/Course/TeacherCoursePage";
 import ProfilePage from "../pages/Profile/ProfilePage";
 import Home from "../Public/Home";
 import Kurumsal from "../Public/pages/kurumsal/Kurumsal";
@@ -31,63 +31,67 @@ import Blog from "../Public/pages/blog/Blog";
 import Iletisim from "../Public/pages/iletisim/İletisim"
 import BlogDetay from "../Public/pages/blogDetay/BlogDetay";
 import GuncelDetay from "../Public/pages/GuncelDetay/GuncelDetay";
+import StudentCourseDashboard from "../pages/Course/StudentCourseDashboard";
 const authProtectedRoutes = [
     {
-        path: "/panel/anasayfa", component: <Dashboard />
+        path: "/panel/anasayfa", component: <Dashboard />, role: ["Öğretmen", "Öğrenci", "Admin", "SüperAdmin"]
     },
     {
-        path: "/panel/egitmen", component: <TeacherDashboard />
+        path: "/panel/egitmen", component: <TeacherDashboard />, role: ["Admin", "SüperAdmin"]
     },
     {
-        path: "/panel/egitmen/ekle", component: <AddTeacherPage />
+        path: "/panel/egitmen/ekle", component: <AddTeacherPage />, role: ["Admin", "SüperAdmin"]
     },
     {
-        path: "/panel/egitmen/duzenle/:id", component: <EditTeacherPage />
+        path: "/panel/egitmen/duzenle/:id", component: <EditTeacherPage />, role: ["Admin", "SüperAdmin"]
     },
     {
-        path: "/panel/admin", component: <AdminDashboard />
+        path: "/panel/admin", component: <AdminDashboard />, role: ["SüperAdmin"]
     },
     {
-        path: "/panel/admin/ekle", component: <CreateAdminPage />
+        path: "/panel/admin/ekle", component: <CreateAdminPage />, role: ["SüperAdmin"]
     },
     {
-        path: "/panel/admin/duzenle/:id", component: <UpdateAdminPage />
+        path: "/panel/admin/duzenle/:id", component: <UpdateAdminPage />, role: ["SüperAdmin"]
     },
     {
-        path: "/panel/branslar", component: <BranchDashboard />
+        path: "/panel/branslar", component: <BranchDashboard />, role: ["Admin", "SüperAdmin"]
     },
     {
-        path: "/panel/donemler", component: <SemesterDashboard />
+        path: "/panel/donemler", component: <SemesterDashboard />, role: ["Admin", "SüperAdmin"]
     },
     {
-        path: "/panel/ogrenciler", component: <StudentDasboard />
+        path: "/panel/ogrenciler", component: <StudentDasboard />, role: ["Admin", "SüperAdmin"]
     },
     {
-        path: "/panel/ogrenci/ekle", component: <CreateStudenPage />
+        path: "/panel/ogrenci/ekle", component: <CreateStudenPage />, role: ["Admin", "SüperAdmin"]
     },
     {
-        path: "/panel/ogrenci/duzenle/:id", component: <UpdateStudentPage />
+        path: "/panel/ogrenci/duzenle/:id", component: <UpdateStudentPage />, role: ["Admin", "SüperAdmin"]
     },
     {
-        path: "/panel/kurslar", component: <ActiveCourseDashboard />
+        path: "/panel/kurslar", component: <ActiveCourseDashboard />, role: ["Admin", "SüperAdmin", "Öğrenci"]
     },
     {
-        path: "/panel/kurs/:id", component: <CourseDetailPage />
+        path: "/panel/kurs/:id", component: <CourseDetailPage />, role: ["Admin", "SüperAdmin", "Öğrenci"]
     },
     {
-        path: "/panel/kurs/ekle", component: <CreateCoursePage />
+        path: "/panel/kurs/ekle", component: <CreateCoursePage />, role: ["Admin", "SüperAdmin"]
     },
     {
-        path: "/panel/kurs/duzenle/:id", component: <CourseUpdatePage />
+        path: "/panel/kurs/duzenle/:id", component: <CourseUpdatePage />, role: ["Admin", "SüperAdmin"]
     },
     {
-        path: "/panel/kurslarim", component: <MyCoursePage />
+        path: "/panel/sorumlukurslar", component: <TeacherCoursePage />, role: ["Öğretmen"]
     },
     {
-        path: "/panel/profil", component: <ProfilePage />
+        path: "/panel/kurslarim", component: <StudentCourseDashboard />, role: ["Öğrenci"]
     },
     {
-        path: "*", component: <Navigate to={"/"} />
+        path: "/panel/profil", component: <ProfilePage />, role: ["Öğretmen", "Öğrenci", "Admin", "SüperAdmin"]
+    },
+    {
+        path: "*", component: <Navigate to={"/"} />, role: ["Öğretmen", "Öğrenci", "Admin", "SüperAdmin"]
     }
 ]
 

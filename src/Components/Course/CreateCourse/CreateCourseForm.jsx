@@ -8,11 +8,10 @@ import "swiper/css/scrollbar";
 import "swiper/css/effect-fade";
 import "swiper/css/effect-flip";
 import { Steps } from 'antd'
-import AddCourseDetailTab from './AddCourseDetailTab';
 import { toast } from 'react-toastify';
-import AddCourseProgram from './AddCourseProgram';
-import AddCoursePhotoTab from './AddCoursePhotoTab';
-import AddCourseDocumentTab from './AddCourseDocumentTab';
+import { Button, Col, Form, FormFeedback, Input, Label, Row } from 'reactstrap';
+import AddCourseDetailTab from "./AddCourseDetailTab"
+import { createCourseApi } from '../../../api/Course';
 
 const CreateCourseForm = () => {
 
@@ -102,31 +101,32 @@ const CreateCourseForm = () => {
 
     const formik = useFormik({
         initialValues: {
-            title: "",
+            name: "",
             description: "",
-            branch: "",
-            quota: 0,
-            teacher: "",
+            limit: 0,
             startDate: "",
             endDate: "",
-            semester: "",
-            active: ""
+            semester: "2024 yaz",
+            type: "",
+            genderType: "",
+            startYear: 0,
+            endYear: 0
         },
         validationSchema: yup.object({
-            title: yup.string().required("Bu alan boş bırakılamaz"),
+            name: yup.string().required("Bu alan boş bırakılamaz"),
             description: yup.string().required(),
-            branch: yup.string().required(),
-            semester: yup.string().required(),
-            active: yup.string().required(),
+            semester: yup.string(),
+            type: yup.string().required(),
+            genderType: yup.string().required(),
             startDate: yup
                 .date()
                 .required()
                 .test('start-date', 'Başlangıç tarihi bitiş tarihinden önce olmalıdır', function (value) {
                     const endDate = this.parent.endDate;  // Değişiklik burada
                     return !endDate || value < endDate;
-                }).test("start-date", "Günümüzden ileri olmalı", function (value) {
+                })/* .test("start-date", "Günümüzden ileri olmalı", function (value) {
                     return new Date() < value
-                }),
+                }) */,
             endDate: yup
                 .date()
                 .required()
@@ -136,14 +136,60 @@ const CreateCourseForm = () => {
                 }).test("end-date", "Günümüzden ileri bir tarih olmalı", function (value) {
                     return new Date() < value
                 }),
-            quota: yup.number().min(1).required(),
-            teacher: yup.string().required()
+            limit: yup.number().min(1).required(),
+            startYear: yup.number()
+                .required("Seçim yapınız")
+                .min(1900, "Seçim yapınız")
+                .test('start-year', 'Başlangıç yılı bitiş yılından küçük olmalıdır', function (value) {
+                    const endYear = this.parent.endYear;
+                    return !endYear || value <= endYear;
+                }),
+            endYear: yup.number()
+                .required("Seçim yapınız")
+                .min(1900, "Seçim yapınız")
+                .test('end-year', 'Bitiş yılı başlangıç yılından büyük olmalıdır', function (value) {
+                    const startYear = this.parent.startYear;
+                    return !startYear || value >= startYear;
+                })
         }),
         onSubmit: async (value, { resetForm }) => {
-            setCurrent(1)
+            try {
+                const { startYear, endYear, startDate, endDate, ...rest } = value
+                const response = await createCourseApi({
+                    ...rest,
+                    startDate: new Date(startDate).toUTCString(),
+                    endDate: new Date(endDate).toUTCString(),
+                    startYear : parseInt(startYear),
+                    endYear : parseInt(endYear)
+                })
+                console.log("res=> ", response)
+                toast.success("Kurs Kaydedildi", {
+                    autoClose: 1500
+                })
+                resetForm()
+            }
+            catch (err) {
+                toast.error("Bir hata oluştu", {
+                    autoClose: 1500
+                })
+            }
+            console.log("val => ", value)
         },
 
     })
+
+    const ornke = {
+        "name": "matematik",
+        "semester": "sasdsadsad",
+        "description": "string",
+        "type": "online",
+        "genderType": "string",
+        "limit": 10,
+        "startYear": 2000,
+        "endYear": 2005,
+        "startDate": "2024-03-20T10:08:40.190Z",
+        "endDate": "2024-03-25T10:08:40.190Z"
+    }
 
     return (
         <>
@@ -155,7 +201,7 @@ const CreateCourseForm = () => {
                     {
                         title: 'Bilgiler',
                     },
-                    {
+                    /* {
                         title: "Program"
                     },
                     {
@@ -163,10 +209,18 @@ const CreateCourseForm = () => {
                     },
                     {
                         title: 'Dökümanlar',
-                    },
+                    }, */
                 ]}
             />
-            <div style={{ marginTop: "40px" }}>
+            <div style={{ marginTop: "40px" }} >
+                {
+                    current == 0 && (
+                        <AddCourseDetailTab formik={formik} />
+                    )
+                }
+
+            </div>
+            {/* <div style={{ marginTop: "40px" }}>
                 {
                     current == 0 && (
                         <AddCourseDetailTab formik={formik} />
@@ -188,7 +242,7 @@ const CreateCourseForm = () => {
                     )
                 }
 
-            </div>
+            </div> */}
 
 
 

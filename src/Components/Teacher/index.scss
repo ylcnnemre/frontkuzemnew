@@ -1,0 +1,15 @@
+.branch_select{
+
+    &:hover{
+        border: none !important;
+    }
+}
+
+.ant-select:hover {
+    border-color: initial !important;
+    box-shadow: none !important;
+}
+
+.ant-select-selector{
+    padding: 4px !important;
+}

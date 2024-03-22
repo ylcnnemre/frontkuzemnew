@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { addCourseAdministrators, getAllCourseByStatusApi } from '../../api/Course'
+import { CourseAdminListGetAll, addCourseAdministrators, getAllCourseByStatusApi } from '../../api/Course'
 import { toast } from 'react-toastify'
 import { Button, Card, Col, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap'
 import DataTable from 'react-data-table-component'
@@ -13,16 +13,20 @@ const ActiveCourseTable = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(false)
     const [TeacherList, setTeacherList] = useState([])
+   
     const [selectTeacherModal, setSelectTeacherModal] = useState({
         courseId: "",
-        show: false
+        show: false,
+        teacher: null
     })
     const [selectedTeacher, setSelectedTeacher] = useState()
     const getCourseList = async () => {
         try {
             setLoading(true)
-            const testList = []
-            const response = await getAllCourseByStatusApi()
+            const response = await getAllCourseByStatusApi({
+                page: 0,
+                pageSize: 10
+            })
             console.log("resp =>", response)
             setCourseData(response.data.items)
         }
@@ -37,12 +41,18 @@ const ActiveCourseTable = () => {
     }
 
     const getTeacherList = async () => {
-        const response = await getUserListApi({
-            page: 0,
-            pageSize: 10,
-            roleId: 2
-        })
-        setTeacherList(response.data.items)
+        try {
+            const response = await getUserListApi({
+                page: 0,
+                pageSize: 10,
+                roleId: 2
+            })
+            setTeacherList(response.data.items)
+        }
+        catch (err) {
+
+        }
+
     }
 
 
@@ -78,24 +88,13 @@ const ActiveCourseTable = () => {
             selector: (row) => {
                 console.log("row =>", row)
                 return (
-
                     <div className="d-flex gap-2">
                         <Button color="warning" onClick={() => {
-                            /*  setSelectedId(row._id)
-                            setEditMode(true)
-                            setShowModal(true) 
-                            navigate(`/panel/kurs/${row._id}`) */
+                            navigate(`/panel/kurs/${row.id}`)
                         }}  >
                             İncele
                         </Button>
-                        <Button onClick={() => {
-                            setSelectTeacherModal({
-                                courseId: row.id,
-                                show: true
-                            })
-                        }} >
-                            Yetkilendir
-                        </Button>
+
                     </div>
 
                 )
@@ -121,12 +120,12 @@ const ActiveCourseTable = () => {
                 <ModalBody>
                     <div className="mb-3">
                         <Label htmlFor="emailInput" className="form-label">
-                            Cinsiyet
+                            Eğitmen
                         </Label>
-                        <select className='form-control' onChange={(e) => {
+                        <select className='form-control' defaultValue={selectTeacherModal?.teacher?.id} onChange={(e) => {
                             setSelectedTeacher(e.target.value)
                         }}   >
-                            <option value="">
+                            <option value=""   >
                                 Eğitmen Seçiniz
                             </option>
                             {
@@ -148,10 +147,18 @@ const ActiveCourseTable = () => {
                                 userId: selectedTeacher,
                                 courseId: selectTeacherModal.courseId
                             })
-                            console.log("response ==> ", response)
+                            toast.success("eğitmen kayıt edildi", {
+                                autoClose: 1000
+                            })
+                            setSelectTeacherModal({
+                                courseId: "",
+                                show: false
+                            })
                         }
                         catch (err) {
-
+                            toast.error("bir hata oluştu", {
+                                autoClose: 1000
+                            })
                         }
                     }} >
                         Kaydet
@@ -169,8 +176,6 @@ const ActiveCourseTable = () => {
             <Row className="mb-2">
                 <Col lg={2}>
                     <Button color="primary" onClick={() => {
-                        /*  setEditMode(false)
-                         setShowModal(true) */
                         navigate("/panel/kurs/ekle")
                     }}>
                         Kurs Ekle
@@ -202,6 +207,7 @@ const ActiveCourseTable = () => {
                 paginationComponentOptions={{
                     rowsPerPageText: "Satır Sayısı",
                     rangeSeparatorText: "-",
+                    noRowsPerPage: true
                 }}
             />
         </>

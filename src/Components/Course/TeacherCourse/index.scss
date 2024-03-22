@@ -1,0 +1,32 @@
+.course_date_time{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.course_card_item{
+    background-color: rgba($color: gray, $alpha: .1);
+    padding: 10px;
+    border-radius: 20px;
+
+    &_title{
+        color: #0D9180 !important ;
+    }
+
+    .teacher_course_join_link{
+        color: black;
+        font-size: 18px;
+    }
+}
+
+.create_courseDate_container{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.teacher_online_course_refresh {
+    display: flex;
+    justify-content: flex-end;
+}

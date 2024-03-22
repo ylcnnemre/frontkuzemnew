@@ -1,82 +1,20 @@
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { Button, Col, Form, FormFeedback, Input, Label, Nav, Row, TabContent, TabPane } from 'reactstrap'
-import { toast } from 'react-toastify'
 import "./index.scss"
-import { getAllSemesterApi } from '../../../api/SemesterApi'
-import { getAllBranch } from '../../../api/Branch'
-import { GetTeacherListApi } from '../../../api/Teacher'
-
-
-
-
 
 
 const AddCourseDetailTab = ({ formik }) => {
-    const [branchList, setBranchList] = useState([])
-    const [teacherList, setTeacherList] = useState([])
-    const [semesterList, setSemesterList] = useState([])
 
-    const changeBranch = (e) => {
-        if (e.target.value == "") {
-            setTeacherList([])
-            formik.handleChange(e)
-        } else {
-            formik.handleChange(e)
-            getTeacherListById(e.target.value)
+    const years = useMemo(() => {
+        const currentYear = new Date().getFullYear();
+        const startYear = 1900;
+        const yearArray = [];
+        for (let year = currentYear; year >= startYear; year--) {
+            yearArray.push(year);
         }
-    }
+        return yearArray;
+    }, []);
 
-    const getBranchList = async () => {
-        try {
-            const branches = await getAllBranch()
-            setBranchList(branches.data.map(item => {
-                return {
-                    id: item._id,
-                    name: item.name
-                }
-            }))
-        }
-        catch (err) {
-            toast.error(`${err.message}`, {
-                autoClose: 1500
-            })
-        }
-    }
-
-    const getTeacherListById = async (id) => {
-        try {
-            const dataList = await GetTeacherListApi(id)
-            console.log("dataList ==>", dataList)
-            setTeacherList(dataList.data)
-        }
-        catch (err) {
-            toast.error(err.message, {
-                autoClose: 1500
-            })
-        }
-    }
-
-
-
-    const getSemesterAll = async () => {
-        try {
-            const response = await getAllSemesterApi()
-            setSemesterList(response.data)
-        }
-        catch (err) {
-
-        }
-    }
-
-    const dayList = useMemo(() => {
-        return ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"]
-    }, [])
-
-
-    useEffect(() => {
-        getBranchList()
-        getSemesterAll()
-    }, [])
     return (
         <Form onSubmit={formik.handleSubmit} >
             <Row>
@@ -85,14 +23,14 @@ const AddCourseDetailTab = ({ formik }) => {
                         <Label className="form-label">
                             İsim
                         </Label>
-                        <Input placeholder='isim' type="text" className="form-control" id="title" name='title'
-                            value={formik.values.title} onChange={formik.handleChange} onBlur={formik.handleBlur}
+                        <Input placeholder='isim' type="text" className="form-control" id="name" name='name'
+                            value={formik.values.name} onChange={formik.handleChange} onBlur={formik.handleBlur}
                             invalid={
-                                formik.touched.title && formik.errors.title ? true : false
+                                formik.touched.name && formik.errors.name ? true : false
                             }
                         />
-                        {formik.touched.title && formik.errors.title ? (
-                            <FormFeedback type="invalid"><div>{formik.errors.title}</div></FormFeedback>
+                        {formik.touched.name && formik.errors.name ? (
+                            <FormFeedback type="invalid"><div>{formik.errors.name}</div></FormFeedback>
                         ) : null}
                     </div>
                 </Col>
@@ -100,66 +38,18 @@ const AddCourseDetailTab = ({ formik }) => {
                 <Col lg={4}>
                     <div className="mb-3">
                         <Label className="form-label">
-                            Branş
-                        </Label>
-                        <select className={`form-control ${formik.touched.branch && formik.errors.branch ? 'is-invalid' : ''} `} value={formik.values.branch} onChange={changeBranch} onBlur={formik.handleBlur} name="branch" id="branch">
-                            <option value="">
-                                Seçim Yapınız
-                            </option>
-                            {
-                                branchList.map((el, index) => {
-                                    return (
-                                        <option key={`${index}`} value={el.id}  >
-                                            {el.name}
-                                        </option>
-                                    )
-                                })
-                            }
-                        </select>
-                        {formik.touched.branch && formik.errors.branch ? (
-                            <FormFeedback type="invalid"><div>{formik.errors.branch}</div></FormFeedback>
-                        ) : null}
-                    </div>
-                </Col>
-                <Col lg={4}>
-                    <div className="mb-3">
-                        <Label className="form-label">
-                            Eğitmen
-                        </Label>
-                        <select className={`form-control ${formik.touched.teacher && formik.errors.teacher ? 'is-invalid' : ''} `} value={formik.values.teacher} onChange={formik.handleChange} onBlur={formik.handleBlur} name="teacher" id="teacher">
-                            <option value="">
-                                Eğitmen Seçiniz
-                            </option>
-                            {
-                                teacherList.map((item, index) => {
-                                    return (
-                                        <option key={`${index}`} value={item._id}>
-                                            {`${item.name} ${item.surname} `}
-                                        </option>
-                                    )
-                                })
-                            }
-                        </select>
-                        {formik.touched.teacher && formik.errors.teacher ? (
-                            <FormFeedback type="invalid"><div>{formik.errors.teacher}</div></FormFeedback>
-                        ) : null}
-                    </div>
-                </Col>
-                <Col lg={4}>
-                    <div className="mb-3">
-                        <Label className="form-label">
                             Kontenjan
                         </Label>
                         <Input
-                            value={formik.values.quota}
+                            value={formik.values.limit}
                             onBlur={formik.handleBlur}
                             onChange={formik.handleChange}
                             placeholder='Kontenjan'
-                            name='quota'
-                            invalid={formik.touched.quota && formik.errors.quota ? true : false}
+                            name='limit'
+                            invalid={formik.touched.limit && formik.errors.limit ? true : false}
                             type='number' />
-                        {formik.touched.quota && formik.errors.quota ? (
-                            <FormFeedback type="invalid"><div>{formik.errors.quota}</div></FormFeedback>
+                        {formik.touched.limit && formik.errors.limit ? (
+                            <FormFeedback type="invalid"><div>{formik.errors.limit}</div></FormFeedback>
                         ) : null}
                     </div>
                 </Col>
@@ -208,53 +98,37 @@ const AddCourseDetailTab = ({ formik }) => {
                         ) : null}
                     </div>
                 </Col>
-                <Col lg={6}>
-                    <div className="mb-3">
-                        <Label className="form-label">
-                            Açıklama
-                        </Label>
-                        <Input value={formik.values.description}
-                            onBlur={formik.handleBlur}
-                            invalid={formik.touched.startDate && formik.errors.endDate ? true : false}
-                            onChange={formik.handleChange}
-                            name='description' id='description' type='textarea'
-                            rows={2} style={{ resize: "none" }} />
 
-                        {formik.touched.description && formik.errors.description ? (
-                            <FormFeedback type="invalid"><div>{formik.errors.description}</div></FormFeedback>
-                        ) : null}
-                    </div>
-                </Col>
-                <Col lg={3}>
+                <Col lg={4}>
                     <div className="mb-3">
                         <Label className="form-label">
                             Dönem
                         </Label>
                         <select onChange={formik.handleChange} className={`form-control ${formik.touched.semester && formik.errors.semester ? 'is-invalid' : ''} `} value={formik.values.semester} onBlur={formik.handleBlur} name="semester" id="semester">
-                            <option value="">
-                                Seçim Yapınız
+                            <option value="2024 yaz">
+                                2024 yaz
                             </option>
-                            {
-                                semesterList.map((el, index) => {
-                                    return (
-                                        <option key={`${index}`} value={el._id}  >
-                                            {el.name}
-                                        </option>
-                                    )
-                                })
-                            }
+                            {/*  {
+                                                semesterList.map((el, index) => {
+                                                    return (
+                                                        <option key={`${index}`} value={el._id}  >
+                                                            {el.name}
+                                                        </option>
+                                                    )
+                                                })
+                                            } */}
                         </select>
                         {formik.touched.semester && formik.errors.semester ? (
                             <FormFeedback type="invalid"><div>{formik.errors.semester}</div></FormFeedback>
                         ) : null}
                     </div>
                 </Col>
-                <Col lg={3}>
+                <Col lg={4}>
                     <div className="mb-3">
                         <Label className="form-label">
                             Aktiflik
                         </Label>
-                        <select onChange={formik.handleChange} className={`form-control ${formik.touched.active && formik.errors.active ? 'is-invalid' : ''} `} value={formik.values.active} onBlur={formik.handleBlur} name="active" id="active">
+                        <select onChange={formik.handleChange} className={`form-control ${formik.touched.type && formik.errors.type ? 'is-invalid' : ''} `} value={formik.values.type} onBlur={formik.handleBlur} name="type" id="type">
                             <option value="">
                                 Seçim Yapınız
                             </option>
@@ -269,16 +143,110 @@ const AddCourseDetailTab = ({ formik }) => {
 
                             }
                         </select>
-                        {formik.touched.active && formik.errors.active ? (
-                            <FormFeedback type="invalid"><div>{formik.errors.active}</div></FormFeedback>
+                        {formik.touched.type && formik.errors.type ? (
+                            <FormFeedback type="invalid"><div>{formik.errors.type}</div></FormFeedback>
                         ) : null}
                     </div>
                 </Col>
 
+                <Col lg={4}>
+                    <div className="mb-3">
+                        <Label className="form-label">
+                            Cinsiyet
+                        </Label>
+                        <select onChange={formik.handleChange} className={`form-control ${formik.touched.genderType && formik.errors.genderType ? 'is-invalid' : ''} `} value={formik.values.genderType} onBlur={formik.handleBlur} name="genderType" id="genderType">
+                            <option value="">
+                                Seçim Yapınız
+                            </option>
+                            {
+                                ["erkek", "kadın", "hepsi"].map((el, index) => {
+                                    return (
+                                        <option value={el} key={`${index}`} >
+                                            {el}
+                                        </option>
+                                    )
+                                })
 
+                            }
+                        </select>
+                        {formik.touched.genderType && formik.errors.genderType ? (
+                            <FormFeedback type="invalid"><div>{formik.errors.genderType}</div></FormFeedback>
+                        ) : null}
+                    </div>
+                </Col>
+
+                <Col lg={4}>
+                    <div className="mb-3">
+                        <Label className="form-label">
+                            Yaş Şartı (Başlangıç Yılı)
+                        </Label>
+                        <select onChange={formik.handleChange} className={`form-control ${formik.touched.startYear && formik.errors.startYear ? 'is-invalid' : ''} `} value={formik.values.startYear} onBlur={formik.handleBlur} name="startYear" id="startYear">
+                            <option value="">
+                                Seçim Yapınız
+                            </option>
+                            {
+                                years.map((el, index) => {
+                                    return (
+                                        <option value={el} key={`${index}`} >
+                                            {el}
+                                        </option>
+                                    )
+                                })
+
+                            }
+                        </select>
+                        {formik.touched.startYear && formik.errors.startYear ? (
+                            <FormFeedback type="invalid"><div>{formik.errors.startYear}</div></FormFeedback>
+                        ) : null}
+                    </div>
+                </Col>
+                <Col lg={4}>
+                    <div className="mb-3">
+                        <Label className="form-label">
+                            Yaş Şartı (Bitiş Yılı)
+                        </Label>
+                        <select onChange={formik.handleChange} className={`form-control ${formik.touched.endYear && formik.errors.endYear ? 'is-invalid' : ''} `} value={formik.values.endYear} onBlur={formik.handleBlur} name="endYear" id="endYear">
+                            <option value="">
+                                Seçim Yapınız
+                            </option>
+                            {
+                                years.map((el, index) => {
+                                    return (
+                                        <option value={el} key={`${index}`} >
+                                            {el}
+                                        </option>
+                                    )
+                                })
+
+                            }
+                        </select>
+                        {formik.touched.endYear && formik.errors.endYear ? (
+                            <FormFeedback type="invalid"><div>{formik.errors.endYear}</div></FormFeedback>
+                        ) : null}
+                    </div>
+                </Col>
+                <Col lg={12}>
+                    <div className="mb-3">
+                        <Label className="form-label">
+                            Açıklama
+                        </Label>
+                        <Input value={formik.values.description}
+                            onBlur={formik.handleBlur}
+                            invalid={formik.touched.description && formik.errors.description ? true : false}
+                            onChange={formik.handleChange}
+                            name='description' id='description' type='textarea'
+                            rows={2} style={{ resize: "none" }} />
+
+                        {formik.touched.description && formik.errors.description ? (
+                            <FormFeedback type="invalid"><div>{formik.errors.description}</div></FormFeedback>
+                        ) : null}
+                    </div>
+                </Col>
                 <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
-                    <Button style={{ padding: "7px 40px" }}>
-                        İlerle
+                    <Button style={{ padding: "7px 40px" }}  onClick={()=>{
+                        formik.handleSubmit()
+                    }} >
+                        Kaydet
                     </Button>
                 </div>
             </Row>

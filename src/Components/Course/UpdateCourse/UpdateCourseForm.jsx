@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { deleteCourseApi, deleteCourseSendEmailApi, getDetailCourseApi } from '../../../api/Course'
-import useCountdown from '@bradgarropy/use-countdown'
+
 import { Button, Col, Modal, ModalBody, ModalFooter, ModalHeader, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -13,7 +13,7 @@ import { UserContext } from '../../../context/user'
 import EditCourseProgram from './EditCourseProgram'
 import EditCourseAnnouncement from './EditCourseAnnouncement'
 import { LuTimer } from 'react-icons/lu'
-import VerificationInput from 'react-verification-input'
+
 
 const UpdateCourseForm = () => {
 
@@ -61,22 +61,7 @@ const UpdateCourseForm = () => {
         detailCourseApiRequest()
     }, [])
 
-    const countdown = useCountdown({
-        minutes: 5,
-        seconds: 0,
-        format: "mm:ss",
-        autoStart: false,
-        onCompleted: () => {
-            setDisableButtonControl({
-                modalButtonDisable: false,
-                deleteButtonDisable: true
-            })
-            setShowDeleteConfirmSection(false)
-            toast.error("Süre doldu", {
-                autoClose: 2000
-            })
-        }
-    })
+   
 
 
     
@@ -207,65 +192,7 @@ const UpdateCourseForm = () => {
                         <EditCourseAnnouncement data={mainData} setData={setMainData} />
                     </TabPane>
                     <TabPane tabId={7}   >
-                        <Row>
-                            <Col lg={8}>
-                                <div className="delete_course_container">
-                                    <Button disabled={disableButtonControl.modalButtonDisable} color="danger" className="delete_course_btn" onClick={() => {
-                                        setShowDeleteModal(true)
-                                    }} >
-                                        Kursu sil
-                                    </Button>
-                                    {
-                                        showDeleteConfirmSection && (
-                                            <div className="delete_course_confirm">
-                                                <div className="timer_container">
-                                                    <h6>
-                                                        Kursu silmek için mailinize gönderilen onay kodunu giriniz
-                                                    </h6>
-                                                    <div className="timer_element">
-                                                        <LuTimer className="timer_icon" />
-                                                        <p style={{ fontWeight: "bold", fontSize: "1rem" }}>
-                                                            {countdown.minutes} : {countdown.seconds}
-                                                        </p>
-
-                                                    </div>
-                                                </div>
-                                                <div className="verification_input_container" >
-                                                   {/*  <VerificationInput validChars='0-9' autoFocus={true} classNames={{
-                                                        character: "character_field",
-                                                    }} onChange={(e) => {
-                                                        setVerificationCode(e)
-                                                        if (e.length == 6) {
-                                                            setDisableButtonControl({
-                                                                ...disableButtonControl,
-                                                                deleteButtonDisable: false
-                                                            })
-                                                        } else {
-                                                            setDisableButtonControl({
-                                                                ...disableButtonControl,
-                                                                deleteButtonDisable: true
-                                                            })
-                                                        }
-                                                    }} /> */}
-                                                </div>
-
-                                                <div className="delete_course_confirm_container">
-                                                    <Button disabled={disableButtonControl.deleteButtonDisable} className="delete_course_confirm_button" color="danger" onClick={async () => {
-                                                        deleteCourse()
-                                                    }} >
-                                                        Onaylıyorum
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        )
-                                    }
-                                </div>
-
-                            </Col>
-                            <Col lg={4}>
-
-                            </Col>
-                        </Row>
+                    
                     </TabPane>
                     {/* <TabPane tabId={2}>
                         <EditCoursePhoto photoList={photoList} setPhotoList={setPhotoList} />
@@ -356,7 +283,7 @@ const UpdateCourseForm = () => {
                         <Button color="danger" onClick={async () => {
                             try {
                                 await deleteCourseSendEmailApi(id)
-                                countdown.start()
+                          
                                 setShowDeleteConfirmSection(true)
                                 setShowDeleteModal(false)
                                 setDisableButtonControl({

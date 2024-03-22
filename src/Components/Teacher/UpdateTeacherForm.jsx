@@ -36,8 +36,8 @@ const UpdateTeacherForm = () => {
             formik.setFieldValue('birthDate', formatBirthDate);
         }
         catch (err) {
-            toast.error(err.message,{
-                autoClose : 1000
+            toast.error(err.message, {
+                autoClose: 1000
             })
         }
     }
@@ -52,11 +52,11 @@ const UpdateTeacherForm = () => {
 
         }
         catch (err) {
-            console.log("err=>", err)
-            toast.error(err.message, {
+            console.log("err=>", err.response)
+            toast.error(err.response.data.Detail, {
                 autoClose: 1000
             })
-            navigate("/egitmen")
+            navigate("/panel/egitmen")
         }
         finally {
             setLoading(false)
@@ -82,9 +82,11 @@ const UpdateTeacherForm = () => {
             phone: "",
             branch: "",
             lastName: "",
-            tcNo: "",
+            tc: "",
         },
         validationSchema: yup.object({
+            firstName: yup.string().required(),
+            lastName: yup.string().required(),
             email: yup.string().email().required(),
             name: yup.string().required(),
             surname: yup.string().required(),
@@ -167,7 +169,7 @@ const UpdateTeacherForm = () => {
                                     <Label htmlFor="firstnameInput" className="form-label">
                                         İsim
                                     </Label>
-                                    <Input type="text" className="form-control" id="name" name='name'
+                                    <Input type="text" className="form-control" id="name" name='firstName'
                                         value={formik.values.firstName} onChange={formik.handleChange} onBlur={formik.handleBlur}
                                         invalid={
                                             formik.touched.firstName && formik.errors.firstName ? true : false
@@ -200,7 +202,7 @@ const UpdateTeacherForm = () => {
                                         Tc No
                                     </Label>
                                     <Input type="text" className="form-control disabled-input"
-                                        value={formik.values.tcNo}
+                                        value={formik.values.tc}
                                         disabled
                                     />
                                 </div>
@@ -221,6 +223,9 @@ const UpdateTeacherForm = () => {
                                             formik.touched.birthDate && formik.errors.birthDate ? true : false
                                         }
                                     />
+                                    {formik.touched.birthDate && formik.errors.birthDate ? (
+                                        <FormFeedback type="invalid"><div>{formik.errors.birthDate}</div></FormFeedback>
+                                    ) : null}
                                 </div>
                             </Col>
                             <Col lg={4}>
@@ -239,7 +244,7 @@ const UpdateTeacherForm = () => {
                             <Col lg={4}>
                                 <div className="mb-3">
                                     <Label htmlFor="emailInput" className="form-label ">Email</Label>
-                                    <Input type="email" className="form-control disabled-input"
+                                    <Input type="text" className="form-control disabled-input"
                                         name='email'
                                         value={formik.values.email}
                                     />
@@ -262,7 +267,7 @@ const UpdateTeacherForm = () => {
                                 </div>
                             </Col>
 
-                            
+
                             <Col lg={12}>
                                 <div className="hstack gap-2 justify-content-end">
                                     <button type="submit"

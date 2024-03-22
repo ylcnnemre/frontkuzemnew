@@ -1,15 +1,15 @@
 import React from 'react'
 import TablePageContainer from '../../Components/Common/TablePageContainer'
-import MyCourseDashboard from '../../Components/Course/MyCourse/MyCourseDashboard'
+import TeacherCourseDashboard from '../../Components/Course/TeacherCourse/TeacherCourseDashboard'
 
-const MyCoursePage = () => {
+const TeacherCoursePage = () => {
     return (
         <div className='page-content' >
             <TablePageContainer title='Kurslarım' >
-                <MyCourseDashboard />
+                <TeacherCourseDashboard />
             </TablePageContainer>
         </div>
     )
 }
 
-export default MyCoursePage
+export default TeacherCoursePage
